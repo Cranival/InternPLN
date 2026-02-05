@@ -1,0 +1,195 @@
+import { useAuth } from '../../contexts/AuthContext';
+import { useData } from '../../contexts/DataContext';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Users, TrendingUp, Clock, Award } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
+import { Alert, AlertDescription } from '../../components/ui/alert';
+import { Link } from 'react-router';
+import { Button } from '../../components/ui/button';
+
+export function MentorDashboard() {
+  const { currentMentor } = useAuth();
+  const { interns } = useData();
+
+  if (!currentMentor) return null;
+
+  const myInterns = interns.filter((i) => i.mentorId === currentMentor.id);
+  const approvedInterns = myInterns.filter((i) => i.status === 'approved');
+  const pendingInterns = myInterns.filter((i) => i.status === 'pending');
+
+  const currentYear = new Date().getFullYear();
+  const internsThisYear = approvedInterns.filter(
+    (i) => new Date(i.periodStart).getFullYear() === currentYear
+  );
+
+  // Interns by year
+  const internsByYear: { [year: string]: number } = {};
+  approvedInterns.forEach((intern) => {
+    const year = new Date(intern.periodStart).getFullYear().toString();
+    internsByYear[year] = (internsByYear[year] || 0) + 1;
+  });
+  const yearChartData = Object.entries(internsByYear)
+    .map(([year, count]) => ({ year, count }))
+    .sort((a, b) => a.year.localeCompare(b.year));
+
+  // Interns by school
+  const internsBySchool: { [school: string]: number } = {};
+  approvedInterns.forEach((intern) => {
+    internsBySchool[intern.school] = (internsBySchool[intern.school] || 0) + 1;
+  });
+  const topSchools = Object.entries(internsBySchool)
+    .map(([school, count]) => ({ school, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+
+  const stats = [
+    {
+      title: 'Total Dibimbing',
+      value: approvedInterns.length,
+      icon: Users,
+      color: 'from-blue-500 to-blue-600',
+    },
+    {
+      title: 'Intern Tahun Ini',
+      value: internsThisYear.length,
+      icon: TrendingUp,
+      color: 'from-green-500 to-green-600',
+    },
+    {
+      title: 'Pending Approval',
+      value: pendingInterns.length,
+      icon: Clock,
+      color: 'from-orange-500 to-orange-600',
+    },
+    {
+      title: 'Total Kampus',
+      value: Object.keys(internsBySchool).length,
+      icon: Award,
+      color: 'from-purple-500 to-purple-600',
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="mb-2 text-2xl font-bold text-gray-900">
+          Dashboard Mentor
+        </h1>
+        <p className="text-gray-600">
+          Selamat datang, {currentMentor.name}
+        </p>
+      </div>
+
+      {/* Pending Approval Alert */}
+      {pendingInterns.length > 0 && (
+        <Alert>
+          <Clock className="size-4" />
+          <AlertDescription>
+            Ada {pendingInterns.length} intern baru menunggu approval.{' '}
+            <Link to="/mentor/approval" className="font-semibold text-blue-600 hover:underline">
+              Lihat sekarang
+            </Link>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Stats Cards */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <Card key={stat.title}>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`rounded-lg bg-gradient-to-br ${stat.color} p-3`}
+                  >
+                    <Icon className="size-6 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">{stat.title}</p>
+                    <p className="text-2xl font-bold">{stat.value}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Intern per Tahun */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Intern per Tahun</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {yearChartData.length === 0 ? (
+              <p className="py-8 text-center text-sm text-gray-500">
+                Belum ada data
+              </p>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={yearChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="year" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="count" fill="#2563eb" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Kampus Terbanyak */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Kampus Terbanyak</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {topSchools.length === 0 ? (
+              <p className="py-8 text-center text-sm text-gray-500">
+                Belum ada data
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {topSchools.map((school, index) => (
+                  <div key={school.school} className="flex items-center gap-4">
+                    <div className="flex size-8 items-center justify-center rounded-full bg-blue-100 font-semibold text-blue-700">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1">
+                      <div className="mb-1 flex items-center justify-between">
+                        <span className="font-medium">{school.school}</span>
+                        <span className="text-sm text-gray-600">
+                          {school.count} intern
+                        </span>
+                      </div>
+                      <div className="h-2 overflow-hidden rounded-full bg-gray-200">
+                        <div
+                          className="h-full rounded-full bg-blue-600"
+                          style={{
+                            width: `${(school.count / topSchools[0].count) * 100}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
