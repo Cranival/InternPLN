@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useData } from '../../contexts/DataContext';
 import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
+import { Button } from '../../components/ui/button';
+import { Label } from '../../components/ui/label';
+import { Textarea } from '../../components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -10,21 +13,65 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../components/ui/select';
-import { Search, GraduationCap, Calendar } from 'lucide-react';
+import { 
+  Search, 
+  GraduationCap, 
+  Calendar, 
+  Pencil, 
+  Trash2, 
+  X, 
+  Save,
+  Upload,
+  AlertTriangle
+} from 'lucide-react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '../../components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../../components/ui/alert-dialog';
 import { Intern } from '../../data/mockData';
+import { toast } from 'sonner';
 
 export function MentorInterns() {
   const { currentMentor } = useAuth();
-  const { interns } = useData();
+  const { interns, updateIntern, deleteIntern } = useData();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterYear, setFilterYear] = useState<string>('all');
   const [selectedIntern, setSelectedIntern] = useState<Intern | null>(null);
+  const [editingIntern, setEditingIntern] = useState<Intern | null>(null);
+  const [deleteConfirmIntern, setDeleteConfirmIntern] = useState<Intern | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+
+  // Edit form state
+  const [editForm, setEditForm] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
+    socialMedia: '',
+    school: '',
+    major: '',
+    location: '',
+    division: '',
+    periodStart: '',
+    periodEnd: '',
+    impression: '',
+    message: '',
+    photo: '',
+  });
 
   if (!currentMentor) return null;
 
@@ -51,6 +98,109 @@ export function MentorInterns() {
 
     return matchesSearch && matchesYear;
   });
+
+  // Open edit modal
+  const handleEdit = (intern: Intern, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditForm({
+      name: intern.name,
+      phone: intern.phone,
+      email: intern.email,
+      address: intern.address,
+      socialMedia: intern.socialMedia || '',
+      school: intern.school,
+      major: intern.major,
+      location: intern.location,
+      division: intern.division,
+      periodStart: intern.periodStart,
+      periodEnd: intern.periodEnd,
+      impression: intern.impression,
+      message: intern.message,
+      photo: intern.photo,
+    });
+    setEditingIntern(intern);
+  };
+
+  // Handle photo upload for edit
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('File harus berupa gambar');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Ukuran file maksimal 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setEditForm(prev => ({ ...prev, photo: reader.result as string }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Save edit
+  const handleSaveEdit = async () => {
+    if (!editingIntern) return;
+
+    setIsSubmitting(true);
+    try {
+      const success = await updateIntern(editingIntern.id, {
+        name: editForm.name,
+        phone: editForm.phone,
+        email: editForm.email,
+        address: editForm.address,
+        socialMedia: editForm.socialMedia,
+        school: editForm.school,
+        major: editForm.major,
+        location: editForm.location,
+        division: editForm.division,
+        periodStart: editForm.periodStart,
+        periodEnd: editForm.periodEnd,
+        impression: editForm.impression,
+        message: editForm.message,
+        photo: editForm.photo,
+      });
+
+      if (success) {
+        toast.success('Data intern berhasil diperbarui');
+        setEditingIntern(null);
+      }
+    } catch (error) {
+      toast.error('Gagal memperbarui data intern');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Delete intern
+  const handleDelete = async () => {
+    if (!deleteConfirmIntern) return;
+
+    setIsSubmitting(true);
+    try {
+      const success = await deleteIntern(deleteConfirmIntern.id);
+      if (success) {
+        toast.success(`Data ${deleteConfirmIntern.name} berhasil dihapus`);
+        setDeleteConfirmIntern(null);
+        setSelectedIntern(null);
+      }
+    } catch (error) {
+      toast.error('Gagal menghapus data intern');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Open delete confirmation
+  const handleDeleteClick = (intern: Intern, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDeleteConfirmIntern(intern);
+  };
 
   return (
     <div className="space-y-6">
@@ -114,12 +264,33 @@ export function MentorInterns() {
               className="group cursor-pointer overflow-hidden transition hover:shadow-lg"
               onClick={() => setSelectedIntern(intern)}
             >
-              <div className="aspect-[4/3] overflow-hidden">
+              <div className="relative aspect-[4/3] overflow-hidden">
                 <img
                   src={intern.photo}
                   alt={intern.name}
                   className="size-full object-cover transition group-hover:scale-105"
                 />
+                {/* Action Buttons Overlay */}
+                <div className="absolute right-2 top-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    className="size-8 bg-white/90 hover:bg-white"
+                    onClick={(e) => handleEdit(intern, e)}
+                    title="Edit"
+                  >
+                    <Pencil className="size-4 text-blue-600" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    className="size-8 bg-white/90 hover:bg-red-50"
+                    onClick={(e) => handleDeleteClick(intern, e)}
+                    title="Hapus"
+                  >
+                    <Trash2 className="size-4 text-red-600" />
+                  </Button>
+                </div>
               </div>
               <CardContent className="p-4">
                 <h3 className="mb-1 font-semibold">{intern.name}</h3>
@@ -256,11 +427,224 @@ export function MentorInterns() {
                     </div>
                   </div>
                 )}
+
+                {/* Action Buttons in Detail Dialog */}
+                <div className="flex gap-2 border-t pt-4">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1 gap-2"
+                    onClick={() => {
+                      setSelectedIntern(null);
+                      handleEdit(selectedIntern, { stopPropagation: () => {} } as React.MouseEvent);
+                    }}
+                  >
+                    <Pencil className="size-4" />
+                    Edit Data
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    className="flex-1 gap-2"
+                    onClick={() => {
+                      setSelectedIntern(null);
+                      setDeleteConfirmIntern(selectedIntern);
+                    }}
+                  >
+                    <Trash2 className="size-4" />
+                    Hapus
+                  </Button>
+                </div>
               </div>
             </>
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Edit Intern Dialog */}
+      <Dialog open={!!editingIntern} onOpenChange={() => setEditingIntern(null)}>
+        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Data Intern</DialogTitle>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            {/* Photo Upload */}
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative">
+                <img
+                  src={editForm.photo || 'https://via.placeholder.com/150'}
+                  alt="Preview"
+                  className="size-24 rounded-full object-cover ring-4 ring-blue-100"
+                />
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="secondary"
+                  className="absolute -bottom-1 -right-1 size-8 rounded-full"
+                  onClick={() => photoInputRef.current?.click()}
+                >
+                  <Upload className="size-4" />
+                </Button>
+              </div>
+              <input
+                ref={photoInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                className="hidden"
+              />
+            </div>
+
+            {/* Form Fields */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="edit-name">Nama Lengkap</Label>
+                <Input
+                  id="edit-name"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-phone">Nomor HP</Label>
+                <Input
+                  id="edit-phone"
+                  value={editForm.phone}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, phone: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-email">Email</Label>
+                <Input
+                  id="edit-email"
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, email: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-socialMedia">Media Sosial</Label>
+                <Input
+                  id="edit-socialMedia"
+                  value={editForm.socialMedia}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, socialMedia: e.target.value }))}
+                  placeholder="@instagram"
+                />
+              </div>
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="edit-address">Alamat</Label>
+                <Textarea
+                  id="edit-address"
+                  value={editForm.address}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, address: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-school">Kampus/Sekolah</Label>
+                <Input
+                  id="edit-school"
+                  value={editForm.school}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, school: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-major">Jurusan</Label>
+                <Input
+                  id="edit-major"
+                  value={editForm.major}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, major: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-location">Lokasi Magang</Label>
+                <Input
+                  id="edit-location"
+                  value={editForm.location}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, location: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-division">Divisi</Label>
+                <Input
+                  id="edit-division"
+                  value={editForm.division}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, division: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-periodStart">Tanggal Mulai</Label>
+                <Input
+                  id="edit-periodStart"
+                  type="date"
+                  value={editForm.periodStart}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, periodStart: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-periodEnd">Tanggal Selesai</Label>
+                <Input
+                  id="edit-periodEnd"
+                  type="date"
+                  value={editForm.periodEnd}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, periodEnd: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="edit-impression">Kesan</Label>
+                <Textarea
+                  id="edit-impression"
+                  value={editForm.impression}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, impression: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="edit-message">Pesan</Label>
+                <Textarea
+                  id="edit-message"
+                  value={editForm.message}
+                  onChange={(e) => setEditForm(prev => ({ ...prev, message: e.target.value }))}
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingIntern(null)} disabled={isSubmitting}>
+              <X className="mr-2 size-4" />
+              Batal
+            </Button>
+            <Button onClick={handleSaveEdit} disabled={isSubmitting}>
+              <Save className="mr-2 size-4" />
+              {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteConfirmIntern} onOpenChange={() => setDeleteConfirmIntern(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-red-600">
+              <AlertTriangle className="size-5" />
+              Konfirmasi Hapus
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus data <strong>{deleteConfirmIntern?.name}</strong>? 
+              Tindakan ini tidak dapat dibatalkan dan semua data termasuk foto galeri akan dihapus permanen.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isSubmitting}>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isSubmitting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isSubmitting ? 'Menghapus...' : 'Ya, Hapus'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

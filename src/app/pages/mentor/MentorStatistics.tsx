@@ -69,8 +69,40 @@ export function MentorStatistics() {
   ];
 
   const handleExport = () => {
-    // Mock export function
-    toast.success('Data statistik berhasil diexport ke Excel');
+    if (myInterns.length === 0) {
+      toast.error('Tidak ada data untuk diexport');
+      return;
+    }
+
+    // Create CSV content
+    const headers = ['No', 'Nama', 'Sekolah/Kampus', 'Jurusan', 'Divisi', 'Lokasi', 'Periode Mulai', 'Periode Selesai', 'Email', 'No HP'];
+    const rows = myInterns.map((intern, index) => [
+      index + 1,
+      intern.name,
+      intern.school,
+      intern.major,
+      intern.division,
+      intern.location,
+      new Date(intern.periodStart).toLocaleDateString('id-ID'),
+      new Date(intern.periodEnd).toLocaleDateString('id-ID'),
+      intern.email,
+      intern.phone,
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `data-intern-${currentMentor?.name.replace(/[^a-zA-Z0-9]/g, '_')}-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+
+    toast.success('Data berhasil diexport ke CSV');
   };
 
   return (

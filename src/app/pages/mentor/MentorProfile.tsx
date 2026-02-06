@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useData } from '../../contexts/DataContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import { User, Save, Camera } from 'lucide-react';
+import { User, Save, Camera, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function MentorProfile() {
-  const { currentMentor } = useAuth();
+  const { currentMentor, refreshMentor } = useAuth();
+  const { updateMentor } = useData();
   const [isEditing, setIsEditing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!currentMentor) return null;
 
@@ -22,16 +25,42 @@ export function MentorProfile() {
     confirmPassword: '',
   });
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (formData.password && formData.password !== formData.confirmPassword) {
       toast.error('Password tidak cocok!');
       return;
     }
 
-    // Mock save function
-    toast.success('Profil berhasil diupdate!');
-    setIsEditing(false);
-    setFormData({ ...formData, password: '', confirmPassword: '' });
+    setIsSubmitting(true);
+    try {
+      const updates: Record<string, string> = {
+        name: formData.name,
+        position: formData.position,
+        division: formData.division,
+        photo: formData.photo,
+      };
+
+      // Only update password if provided
+      if (formData.password) {
+        updates.password = formData.password;
+      }
+
+      const success = await updateMentor(currentMentor.id, updates);
+      
+      if (success) {
+        toast.success('Profil berhasil diupdate!');
+        setIsEditing(false);
+        setFormData({ ...formData, password: '', confirmPassword: '' });
+        // Refresh mentor data in auth context
+        if (refreshMentor) {
+          refreshMentor();
+        }
+      }
+    } catch (error) {
+      toast.error('Gagal menyimpan profil');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {

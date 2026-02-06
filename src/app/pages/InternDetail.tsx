@@ -1,6 +1,5 @@
 import { useParams, Link } from 'react-router';
 import { useData } from '../contexts/DataContext';
-import { mockMentors } from '../data/mockData';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import {
@@ -14,7 +13,7 @@ import {
 
 export function InternDetail() {
   const { id } = useParams<{ id: string }>();
-  const { interns } = useData();
+  const { interns, getMentorById } = useData();
 
   const intern = interns.find((i) => i.id === id && i.status === 'approved');
 
@@ -33,7 +32,7 @@ export function InternDetail() {
     );
   }
 
-  const mentor = mockMentors.find((m) => m.id === intern.mentorId);
+  const mentor = getMentorById(intern.mentorId);
 
   return (
     <div className="min-h-screen bg-gray-50">

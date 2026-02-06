@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { mockMentors } from '../data/mockData';
 import { useData } from '../contexts/DataContext';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -12,7 +11,7 @@ import {
 } from '../components/ui/dialog';
 
 export function MentorList() {
-  const { interns } = useData();
+  const { interns, mentors, getMentorById } = useData();
   const [selectedMentor, setSelectedMentor] = useState<string | null>(null);
 
   const getMentorInterns = (mentorId: string) => {
@@ -21,7 +20,7 @@ export function MentorList() {
     );
   };
 
-  const mentor = mockMentors.find((m) => m.id === selectedMentor);
+  const mentor = selectedMentor ? getMentorById(selectedMentor) : null;
   const mentorInterns = selectedMentor ? getMentorInterns(selectedMentor) : [];
 
   return (
@@ -34,7 +33,7 @@ export function MentorList() {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {mockMentors.map((mentor) => {
+        {mentors.map((mentor) => {
           const totalInterns = getMentorInterns(mentor.id).length;
           return (
             <Card

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useData } from '../contexts/DataContext';
-import { mockMentors } from '../data/mockData';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -12,12 +11,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
-import { Search, Plus, GraduationCap, Calendar } from 'lucide-react';
+import { Search, Plus, GraduationCap, Calendar, Filter, X } from 'lucide-react';
 
 export function InternList() {
-  const { interns } = useData();
+  const { interns, getMentorById, mentors } = useData();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterYear, setFilterYear] = useState<string>('all');
+  const [filterDivision, setFilterDivision] = useState<string>('all');
+  const [filterMentor, setFilterMentor] = useState<string>('all');
 
   const approvedInterns = interns.filter((i) => i.status === 'approved');
 
@@ -30,19 +31,46 @@ export function InternList() {
     )
   ).sort((a, b) => b.localeCompare(a));
 
+  // Get unique divisions
+  const divisions = Array.from(
+    new Set(approvedInterns.map((i) => i.division))
+  ).sort();
+
+  // Check if any filter is active
+  const hasActiveFilters = filterYear !== 'all' || filterDivision !== 'all' || filterMentor !== 'all' || searchQuery !== '';
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchQuery('');
+    setFilterYear('all');
+    setFilterDivision('all');
+    setFilterMentor('all');
+  };
+
   // Filter interns
-  const filteredInterns = approvedInterns.filter((intern) => {
-    const matchesSearch =
-      intern.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      intern.school.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      intern.division.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredInterns = approvedInterns
+    .filter((intern) => {
+      const matchesSearch =
+        intern.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        intern.school.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        intern.division.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesYear =
-      filterYear === 'all' ||
-      new Date(intern.periodStart).getFullYear().toString() === filterYear;
+      const matchesYear =
+        filterYear === 'all' ||
+        new Date(intern.periodStart).getFullYear().toString() === filterYear;
 
-    return matchesSearch && matchesYear;
-  });
+      const matchesDivision =
+        filterDivision === 'all' ||
+        intern.division === filterDivision;
+
+      const matchesMentor =
+        filterMentor === 'all' ||
+        intern.mentorId === filterMentor;
+
+      return matchesSearch && matchesYear && matchesDivision && matchesMentor;
+    })
+    // Sort by createdAt descending (newest first)
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -66,8 +94,9 @@ export function InternList() {
       {/* Search and Filter */}
       <Card className="mb-6">
         <CardContent className="p-4">
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <div className="relative flex-1">
+          <div className="flex flex-col gap-4">
+            {/* Search Bar */}
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
               <Input
                 placeholder="Cari nama, kampus, atau divisi..."
@@ -76,19 +105,68 @@ export function InternList() {
                 className="pl-10"
               />
             </div>
-            <Select value={filterYear} onValueChange={setFilterYear}>
-              <SelectTrigger className="w-full sm:w-[200px]">
-                <SelectValue placeholder="Filter Tahun" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Semua Tahun</SelectItem>
-                {years.map((year) => (
-                  <SelectItem key={year} value={year}>
-                    {year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            
+            {/* Filter Row */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Filter className="size-4" />
+                <span>Filter:</span>
+              </div>
+              
+              <Select value={filterYear} onValueChange={setFilterYear}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Tahun" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua Tahun</SelectItem>
+                  {years.map((year) => (
+                    <SelectItem key={year} value={year}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={filterDivision} onValueChange={setFilterDivision}>
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue placeholder="Divisi" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua Divisi</SelectItem>
+                  {divisions.map((division) => (
+                    <SelectItem key={division} value={division}>
+                      {division}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={filterMentor} onValueChange={setFilterMentor}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Mentor" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua Mentor</SelectItem>
+                  {mentors.map((mentor) => (
+                    <SelectItem key={mentor.id} value={mentor.id}>
+                      {mentor.name.split(',')[0]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="gap-1 text-gray-500 hover:text-gray-700"
+                >
+                  <X className="size-4" />
+                  Reset
+                </Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -109,7 +187,7 @@ export function InternList() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
           {filteredInterns.map((intern) => {
-            const mentor = mockMentors.find((m) => m.id === intern.mentorId);
+            const mentor = getMentorById(intern.mentorId);
             return (
               <Link
                 key={intern.id}

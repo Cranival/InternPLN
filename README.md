@@ -2,25 +2,44 @@
 
 Sistem web internal profesional untuk pendataan dan dokumentasi mahasiswa magang/internship serta siswa PKL/prakerin di lingkungan PLN.
 
+## 🛠️ Tech Stack
+
+- **Frontend**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui (Radix UI)
+- **Routing**: React Router v7
+- **Charts**: Recharts
+- **Icons**: Lucide React
+
 ## 🎯 Fitur Utama
 
 ### Halaman Publik
 - **Dashboard Utama**: Statistik, grafik intern per tahun, testimoni, dan galeri
 - **Daftar Mentor**: Card view semua mentor dengan detail bimbingan
 - **Data Intern/Alumni**: Database lengkap dengan search dan filter
+- **Detail Intern**: Halaman detail lengkap untuk setiap intern
 - **Galeri Kegiatan**: Dokumentasi foto kegiatan magang
 - **Form Tambah Intern**: Pendaftaran intern baru (menunggu approval)
 
 ### Dashboard Mentor (Setelah Login)
 - **Dashboard**: Overview statistik dan data bimbingan
-- **Approval Intern**: Review dan approve data intern yang masuk
+- **Approval Intern**: Review dan approve/tolak data intern yang masuk
 - **Data Intern Bimbingan**: Daftar lengkap intern yang dibimbing
 - **Statistik**: Grafik dan analisis data bimbingan
 - **Profil**: Edit informasi profil mentor
 
+### Dashboard Admin (Setelah Login)
+- **Dashboard**: Overview statistik keseluruhan sistem
+- **Manajemen Mentor**: CRUD data mentor (tambah, edit, hapus)
+- **Manajemen Intern**: Kelola seluruh data intern dalam sistem
+
 ## 🔐 Demo Login Credentials
 
-Untuk mengakses dashboard mentor, gunakan kredensial berikut:
+### Admin
+- **Username**: `admin`
+- **Password**: `admin123`
+- **Akses**: `/admin/login`
 
 ### Mentor 1 - Distribusi
 - **NIP**: `198501012010011001`
@@ -51,8 +70,9 @@ Untuk mengakses dashboard mentor, gunakan kredensial berikut:
 1. **Dashboard** (`/`) - Halaman utama dengan statistik
 2. **Mentor** (`/mentor`) - Daftar mentor
 3. **Intern** (`/intern`) - Database alumni intern
-4. **Galeri** (`/galeri`) - Foto kegiatan
-5. **Login Mentor** (`/login`) - Halaman login
+4. **Detail Intern** (`/intern/:id`) - Detail data intern
+5. **Galeri** (`/gallery`) - Foto kegiatan
+6. **Login Mentor** (`/login`) - Halaman login mentor
 
 ### Mentor Dashboard (Setelah Login)
 1. **Dashboard** (`/mentor/dashboard`) - Overview
@@ -61,14 +81,25 @@ Untuk mengakses dashboard mentor, gunakan kredensial berikut:
 4. **Statistik** (`/mentor/statistics`) - Analisis data
 5. **Profil Saya** (`/mentor/profile`) - Edit profil
 
+### Admin Dashboard (Setelah Login)
+1. **Dashboard** (`/admin/dashboard`) - Overview sistem
+2. **Manajemen Mentor** (`/admin/mentors`) - CRUD mentor
+3. **Manajemen Intern** (`/admin/interns`) - Kelola data intern
+
 ## 🚀 Cara Menggunakan
 
-1. Buka aplikasi di browser
+### Instalasi
+```bash
+npm install
+npm run dev
+```
+
+### Penggunaan
+1. Buka aplikasi di browser (`http://localhost:5173`)
 2. Explore halaman publik untuk melihat data intern dan mentor
 3. Klik "Tambah Intern" untuk submit data intern baru
-4. Login sebagai mentor menggunakan kredensial di atas
-5. Approve atau tolak data intern yang masuk
-6. Lihat statistik dan data bimbingan Anda
+4. Login sebagai mentor untuk approve/tolak data intern
+5. Login sebagai admin untuk manajemen mentor dan data
 
 ## 💾 Data Storage
 
@@ -84,6 +115,23 @@ Untuk persistensi data permanen, sistem ini dapat diintegrasikan dengan Supabase
 - Distribusi jurusan (Pie Chart)
 - Top 5 kampus dan jurusan
 - Export data (mock function)
+
+## 📁 Struktur Folder
+
+```
+src/
+├── app/
+│   ├── components/     # Komponen reusable (Layout, Navbar, UI)
+│   ├── contexts/       # React Context (Auth, Admin, Data)
+│   ├── data/           # Mock data
+│   ├── lib/            # Utilities dan database
+│   ├── pages/          # Halaman aplikasi
+│   │   ├── admin/      # Halaman admin
+│   │   └── mentor/     # Halaman mentor
+│   ├── App.tsx
+│   └── routes.tsx
+└── styles/             # CSS dan Tailwind config
+```
 
 ---
 
