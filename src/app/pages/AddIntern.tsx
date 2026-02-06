@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useData } from '../contexts/DataContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -15,6 +15,10 @@ import {
 } from '../components/ui/select';
 import { Plus, X, Upload, Image, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { SchoolCombobox } from '../components/SchoolCombobox';
+import { schools } from '../data/schools';
+import { addCustomSchool, getAllSchools } from '../lib/schoolStorage';
+import { fetchSchoolsProxy } from '../lib/schoolsApi';
 
 export function AddIntern() {
   const navigate = useNavigate();
@@ -43,6 +47,25 @@ export function AddIntern() {
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+    // Load custom schools + default schools
+  const [allSchools, setAllSchools] = useState(() => getAllSchools(schools));
+
+  // Effect: sync custom schools saat component mount
+  useEffect(() => {
+    setAllSchools(getAllSchools(schools));
+  }, []);
+
+  const handleAddCustomSchool = (schoolName: string) => {
+    const added = addCustomSchool(schoolName);
+    if (added) {
+      const updated = getAllSchools(schools);
+      setAllSchools(updated);
+      toast.success(`"${schoolName}" ditambahkan ke daftar kampus!`);
+    } else {
+      toast.info(`"${schoolName}" sudah ada di daftar.`);
+    }
+    return added;
+  };
   
   // Refs for file inputs
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -490,19 +513,19 @@ export function AddIntern() {
                 <Label htmlFor="school" className={errors.school ? 'text-red-600' : ''}>
                   Kampus/Sekolah <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="school"
+                <SchoolCombobox
+                  items={allSchools}
+                  fetchSchools={fetchSchoolsProxy}
+                  onAddCustom={handleAddCustomSchool}
                   value={formData.school}
-                  onChange={(e) => {
-                    setFormData({ ...formData, school: e.target.value });
-                    if (errors.school) {
-                      setErrors({ ...errors, school: '' });
-                    }
+                  onValueChange={(value) => {
+                    setFormData({ ...formData, school: value });
+                    if (errors.school) setErrors({ ...errors, school: '' });
                   }}
-                  placeholder="Nama kampus atau sekolah"
-                  className={errors.school ? 'border-red-500 focus-visible:border-red-500' : ''}
+                  placeholder="Pilih atau cari kampus/sekolah..."
+                  searchPlaceholder="Cari kampus atau sekolah..."
                   disabled={isLoading}
-                  required
+                  error={!!errors.school}
                 />
                 {errors.school && (
                   <p className="text-red-500 text-sm mt-1">{errors.school}</p>
