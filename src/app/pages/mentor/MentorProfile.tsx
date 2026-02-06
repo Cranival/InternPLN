@@ -79,8 +79,8 @@ export function MentorProfile() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="mb-2 text-2xl font-bold text-gray-900">Profil Saya</h1>
-        <p className="text-gray-600">Kelola informasi profil Anda</p>
+        <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">Profil Saya</h1>
+        <p className="text-gray-600 dark:text-gray-400">Kelola informasi profil Anda</p>
       </div>
 
       <Card>

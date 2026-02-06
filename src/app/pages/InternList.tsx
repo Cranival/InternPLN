@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
-import { Search, Plus, GraduationCap, Calendar, Filter, X } from 'lucide-react';
+import { Search, Plus, GraduationCap, Calendar, Filter, X, ChevronRight } from 'lucide-react';
 
 export function InternList() {
   const { interns, getMentorById, mentors } = useData();
@@ -74,47 +74,47 @@ export function InternList() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="mb-2 text-3xl font-bold text-blue-900">
+          <h1 className="mb-1 text-3xl font-bold tracking-tight text-foreground">
             Data Alumni Intern & PKL
           </h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Database lengkap mahasiswa magang dan siswa PKL PLN
           </p>
         </div>
         <Link to="/intern/tambah">
-          <Button className="gap-2">
-            <Plus className="size-4" />
+          <Button className="gap-3 px-8 py-4 text-lg shadow-md shadow-blue-500/20 hover:shadow-lg transition-all">
+            <Plus className="size-6" />
             Tambah Intern
           </Button>
         </Link>
       </div>
 
       {/* Search and Filter */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="flex flex-col gap-4">
+      <Card className="mb-6 border-0 shadow-md bg-white/80 backdrop-blur-sm">
+        <CardContent className="p-5">
+          <div className="flex flex-col gap-5">
             {/* Search Bar */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
+              <Search className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Cari nama, kampus, atau divisi..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-12 h-12 text-base rounded-xl border-gray-200 bg-gray-50/50 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
             
             {/* Filter Row */}
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Filter className="size-4" />
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-2 text-base text-muted-foreground">
+                <Filter className="size-5" />
                 <span>Filter:</span>
               </div>
               
               <Select value={filterYear} onValueChange={setFilterYear}>
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger className="w-[160px] h-11 text-base">
                   <SelectValue placeholder="Tahun" />
                 </SelectTrigger>
                 <SelectContent>
@@ -128,7 +128,7 @@ export function InternList() {
               </Select>
 
               <Select value={filterDivision} onValueChange={setFilterDivision}>
-                <SelectTrigger className="w-[160px]">
+                <SelectTrigger className="w-[180px] h-11 text-base">
                   <SelectValue placeholder="Divisi" />
                 </SelectTrigger>
                 <SelectContent>
@@ -142,7 +142,7 @@ export function InternList() {
               </Select>
 
               <Select value={filterMentor} onValueChange={setFilterMentor}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[200px] h-11 text-base">
                   <SelectValue placeholder="Mentor" />
                 </SelectTrigger>
                 <SelectContent>
@@ -172,20 +172,22 @@ export function InternList() {
       </Card>
 
       {/* Results Count */}
-      <div className="mb-4 text-sm text-gray-600">
+      <div className="mb-4 text-sm text-muted-foreground">
         Menampilkan {filteredInterns.length} dari {approvedInterns.length} intern
       </div>
 
       {/* Intern Grid */}
       {filteredInterns.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <GraduationCap className="mx-auto mb-4 size-12 text-gray-400" />
-            <p className="text-gray-600">Tidak ada data intern ditemukan</p>
+        <Card className="border-0 shadow-md">
+          <CardContent className="py-16 text-center">
+            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200">
+              <GraduationCap className="size-8 text-gray-400" />
+            </div>
+            <p className="text-muted-foreground">Tidak ada data intern ditemukan</p>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {filteredInterns.map((intern) => {
             const mentor = getMentorById(intern.mentorId);
             return (
@@ -194,41 +196,44 @@ export function InternList() {
                 to={`/intern/${intern.id}`}
                 className="group"
               >
-                <Card className="overflow-hidden transition hover:shadow-lg">
-                  <div className="aspect-square overflow-hidden">
-                    <img
-                      src={intern.photo}
-                      alt={intern.name}
-                      className="size-full object-cover transition group-hover:scale-105"
-                    />
-                  </div>
-                  <CardContent className="p-3">
-                    <h3 className="mb-1 text-sm font-semibold text-gray-900 line-clamp-1">
-                      {intern.name}
-                    </h3>
-                    <p className="mb-2 text-xs text-gray-600 line-clamp-1">
-                      {intern.school}
-                    </p>
-                    <div className="mb-2 inline-block rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
-                      {intern.division}
-                    </div>
-                    <div className="mt-2 space-y-1 border-t pt-2 text-xs text-gray-500">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="size-3" />
-                        <span className="text-xs">
-                          {new Date(intern.periodStart).toLocaleDateString(
-                            'id-ID',
-                            { month: 'short', year: 'numeric' }
-                          )}{' '}
-                          -{' '}
-                          {new Date(intern.periodEnd).toLocaleDateString(
-                            'id-ID',
-                            { month: 'short', year: 'numeric' }
-                          )}
-                        </span>
+                <Card className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-0 shadow-md bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <div className="mb-4 flex justify-center">
+                      <div className="relative">
+                        <img
+                          src={intern.photo}
+                          alt={intern.name}
+                          className="size-28 rounded-3xl object-cover ring-4 ring-blue-100 shadow-lg transition-transform group-hover:scale-105"
+                        />
+                        <div className="absolute -bottom-1 -right-1 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 p-2.5 shadow-lg ring-4 ring-white dark:ring-slate-900">
+                          <GraduationCap className="size-5 text-white" />
+                        </div>
                       </div>
-                      <p className="line-clamp-1 text-xs">Mentor: {mentor?.name}</p>
                     </div>
+
+                    <div className="text-center">
+                      <h3 className="mb-1 font-semibold text-foreground line-clamp-1">
+                        {intern.name}
+                      </h3>
+                      <p className="mb-2 text-xs text-muted-foreground line-clamp-1">
+                        {intern.school}
+                      </p>
+                      <div className="mb-3 inline-block rounded-full bg-gradient-to-r from-blue-50 to-blue-100 px-3 py-1 text-xs font-medium text-blue-700 shadow-sm">
+                        {intern.division}
+                      </div>
+                    </div>
+
+                    <div className="mb-4 flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                      <Calendar className="size-4 text-blue-500" />
+                      <span>
+                        {new Date(intern.periodStart).toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })} - {new Date(intern.periodEnd).toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })}
+                      </span>
+                    </div>
+
+                    <Button className="w-full gap-2 shadow-md shadow-blue-500/20 hover:shadow-lg transition-all">
+                      Detail Intern
+                      <ChevronRight className="size-4 transition-transform group-hover:translate-x-1" />
+                    </Button>
                   </CardContent>
                 </Card>
               </Link>

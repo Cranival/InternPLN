@@ -110,10 +110,10 @@ export function AdminLogin() {
               {isLoading ? 'Memproses...' : 'Login Admin'}
             </Button>
 
-            <div className="mt-4 rounded-lg bg-gray-50 p-3 text-center text-xs text-gray-600">
+            <div className="mt-4 rounded-lg bg-gray-50 dark:bg-slate-800 p-3 text-center text-xs text-gray-600 dark:text-gray-300">
               <p className="font-medium">Demo Credentials:</p>
-              <p>Username: <code className="rounded bg-gray-200 px-1">admin</code></p>
-              <p>Password: <code className="rounded bg-gray-200 px-1">admin123</code></p>
+              <p>Username: <code className="rounded bg-gray-200 dark:bg-slate-700 px-1">admin</code></p>
+              <p>Password: <code className="rounded bg-gray-200 dark:bg-slate-700 px-1">admin123</code></p>
             </div>
           </form>
         </CardContent>

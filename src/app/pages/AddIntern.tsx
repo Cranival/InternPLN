@@ -51,25 +51,60 @@ export function AddIntern() {
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {};
     
+    // Data Pribadi
     if (!formData.name.trim()) {
       newErrors.name = 'Nama lengkap harus diisi';
     }
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Nomor HP harus diisi';
+    } else if (!/^[0-9+\-\s]+$/.test(formData.phone)) {
+      newErrors.phone = 'Format nomor HP tidak valid';
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email harus diisi';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Format email tidak valid';
+    }
+    if (!formData.address.trim()) {
+      newErrors.address = 'Alamat harus diisi';
+    }
+    if (!photoPreview) {
+      newErrors.photo = 'Foto profil harus diupload';
+    }
+    
+    // Data Akademik
     if (!formData.school.trim()) {
       newErrors.school = 'Kampus/Sekolah harus diisi';
+    }
+    if (!formData.major.trim()) {
+      newErrors.major = 'Jurusan harus diisi';
+    }
+    
+    // Data Magang
+    if (!formData.location.trim()) {
+      newErrors.location = 'Lokasi PLN harus diisi';
+    }
+    if (!formData.division.trim()) {
+      newErrors.division = 'Divisi harus diisi';
     }
     if (!formData.mentorId) {
       newErrors.mentorId = 'Mentor harus dipilih';
     }
-    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Format email tidak valid';
+    if (!formData.periodStart) {
+      newErrors.periodStart = 'Periode mulai harus diisi';
     }
-    if (formData.phone && !/^[0-9+\-\s]+$/.test(formData.phone)) {
-      newErrors.phone = 'Format nomor HP tidak valid';
+    if (!formData.periodEnd) {
+      newErrors.periodEnd = 'Periode selesai harus diisi';
+    } else if (formData.periodStart && new Date(formData.periodStart) >= new Date(formData.periodEnd)) {
+      newErrors.periodEnd = 'Tanggal selesai harus setelah tanggal mulai';
     }
-    if (formData.periodStart && formData.periodEnd) {
-      if (new Date(formData.periodStart) >= new Date(formData.periodEnd)) {
-        newErrors.periodEnd = 'Tanggal selesai harus setelah tanggal mulai';
-      }
+    
+    // Kesan & Pesan
+    if (!formData.impression.trim()) {
+      newErrors.impression = 'Kesan harus diisi';
+    }
+    if (!formData.message.trim()) {
+      newErrors.message = 'Pesan harus diisi';
     }
     
     setErrors(newErrors);
@@ -237,10 +272,10 @@ export function AddIntern() {
     <div className="container mx-auto px-4 py-8">
       <div className="mx-auto max-w-3xl">
         <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold text-blue-900">
+          <h1 className="mb-2 text-3xl font-bold text-blue-900 dark:text-white">
             Tambah Data Intern
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             Isi formulir di bawah untuk mendaftar sebagai intern PLN
           </p>
         </div>
@@ -277,7 +312,7 @@ export function AddIntern() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <Label htmlFor="phone" className={errors.phone ? 'text-red-600' : ''}>
-                    No. HP
+                    No. HP <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="phone"
@@ -292,6 +327,7 @@ export function AddIntern() {
                     placeholder="081234567890"
                     className={errors.phone ? 'border-red-500 focus-visible:border-red-500' : ''}
                     disabled={isLoading}
+                    required
                   />
                   {errors.phone && (
                     <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
@@ -299,7 +335,7 @@ export function AddIntern() {
                 </div>
                 <div>
                   <Label htmlFor="email" className={errors.email ? 'text-red-600' : ''}>
-                    Email
+                    Email <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="email"
@@ -314,6 +350,7 @@ export function AddIntern() {
                     placeholder="email@example.com"
                     className={errors.email ? 'border-red-500 focus-visible:border-red-500' : ''}
                     disabled={isLoading}
+                    required
                   />
                   {errors.email && (
                     <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -335,21 +372,34 @@ export function AddIntern() {
               </div>
 
               <div>
-                <Label htmlFor="address">Alamat</Label>
+                <Label htmlFor="address" className={errors.address ? 'text-red-600' : ''}>
+                  Alamat <span className="text-red-500">*</span>
+                </Label>
                 <Textarea
                   id="address"
                   value={formData.address}
-                  onChange={(e) =>
-                    setFormData({ ...formData, address: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setFormData({ ...formData, address: e.target.value });
+                    if (errors.address) {
+                      setErrors({ ...errors, address: '' });
+                    }
+                  }}
                   placeholder="Alamat lengkap"
                   rows={3}
+                  className={errors.address ? 'border-red-500 focus-visible:border-red-500' : ''}
                   disabled={isLoading}
+                  required
                 />
+                {errors.address && (
+                  <p className="text-red-500 text-sm mt-1">{errors.address}</p>
+                )}
               </div>
 
               <div>
-                <Label>Foto Profil</Label>
+                <Label className={errors.photo ? 'text-red-600' : ''}>Foto Profil <span className="text-red-500">*</span></Label>
+                {errors.photo && (
+                  <p className="text-red-500 text-sm mt-1">{errors.photo}</p>
+                )}
                 <div className="mt-2">
                   {/* Hidden file input */}
                   <input
@@ -401,17 +451,17 @@ export function AddIntern() {
                       onClick={() => !isLoading && photoInputRef.current?.click()}
                       className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
                         isLoading 
-                          ? 'border-gray-200 bg-gray-50 cursor-not-allowed' 
-                          : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+                          ? 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-800 cursor-not-allowed' 
+                          : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-slate-800'
                       }`}
                     >
                       <div className="flex flex-col items-center gap-2">
-                        <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center">
                           <Image className="size-8 text-gray-400" />
                         </div>
                         <div>
-                          <p className="font-medium text-gray-700">Klik untuk upload foto profil</p>
-                          <p className="text-sm text-gray-500">JPG, PNG atau GIF (Max. 5MB)</p>
+                          <p className="font-medium text-gray-700 dark:text-gray-200">Klik untuk upload foto profil</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">JPG, PNG atau GIF (Max. 5MB)</p>
                         </div>
                         <Button
                           type="button"
@@ -460,16 +510,26 @@ export function AddIntern() {
               </div>
 
               <div>
-                <Label htmlFor="major">Jurusan</Label>
+                <Label htmlFor="major" className={errors.major ? 'text-red-600' : ''}>
+                  Jurusan <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="major"
                   value={formData.major}
-                  onChange={(e) =>
-                    setFormData({ ...formData, major: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setFormData({ ...formData, major: e.target.value });
+                    if (errors.major) {
+                      setErrors({ ...errors, major: '' });
+                    }
+                  }}
                   placeholder="Nama jurusan"
+                  className={errors.major ? 'border-red-500 focus-visible:border-red-500' : ''}
                   disabled={isLoading}
+                  required
                 />
+                {errors.major && (
+                  <p className="text-red-500 text-sm mt-1">{errors.major}</p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -480,29 +540,49 @@ export function AddIntern() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="location">Lokasi PLN</Label>
+                <Label htmlFor="location" className={errors.location ? 'text-red-600' : ''}>
+                  Lokasi PLN <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="location"
                   value={formData.location}
-                  onChange={(e) =>
-                    setFormData({ ...formData, location: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setFormData({ ...formData, location: e.target.value });
+                    if (errors.location) {
+                      setErrors({ ...errors, location: '' });
+                    }
+                  }}
                   placeholder="Contoh: PLN Kantor Pusat Jakarta"
+                  className={errors.location ? 'border-red-500 focus-visible:border-red-500' : ''}
                   disabled={isLoading}
+                  required
                 />
+                {errors.location && (
+                  <p className="text-red-500 text-sm mt-1">{errors.location}</p>
+                )}
               </div>
 
               <div>
-                <Label htmlFor="division">Divisi</Label>
+                <Label htmlFor="division" className={errors.division ? 'text-red-600' : ''}>
+                  Divisi <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="division"
                   value={formData.division}
-                  onChange={(e) =>
-                    setFormData({ ...formData, division: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setFormData({ ...formData, division: e.target.value });
+                    if (errors.division) {
+                      setErrors({ ...errors, division: '' });
+                    }
+                  }}
                   placeholder="Contoh: Teknologi Informasi"
+                  className={errors.division ? 'border-red-500 focus-visible:border-red-500' : ''}
                   disabled={isLoading}
+                  required
                 />
+                {errors.division && (
+                  <p className="text-red-500 text-sm mt-1">{errors.division}</p>
+                )}
               </div>
 
               <div>
@@ -541,20 +621,30 @@ export function AddIntern() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <Label htmlFor="periodStart">Periode Mulai</Label>
+                  <Label htmlFor="periodStart" className={errors.periodStart ? 'text-red-600' : ''}>
+                    Periode Mulai <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     id="periodStart"
                     type="date"
                     value={formData.periodStart}
-                    onChange={(e) =>
-                      setFormData({ ...formData, periodStart: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setFormData({ ...formData, periodStart: e.target.value });
+                      if (errors.periodStart) {
+                        setErrors({ ...errors, periodStart: '' });
+                      }
+                    }}
+                    className={errors.periodStart ? 'border-red-500 focus-visible:border-red-500' : ''}
                     disabled={isLoading}
+                    required
                   />
+                  {errors.periodStart && (
+                    <p className="text-red-500 text-sm mt-1">{errors.periodStart}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="periodEnd" className={errors.periodEnd ? 'text-red-600' : ''}>
-                    Periode Selesai
+                    Periode Selesai <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="periodEnd"
@@ -584,34 +674,54 @@ export function AddIntern() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="impression">Kesan</Label>
+                <Label htmlFor="impression" className={errors.impression ? 'text-red-600' : ''}>
+                  Kesan <span className="text-red-500">*</span>
+                </Label>
                 <Textarea
                   id="impression"
                   value={formData.impression}
-                  onChange={(e) =>
-                    setFormData({ ...formData, impression: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setFormData({ ...formData, impression: e.target.value });
+                    if (errors.impression) {
+                      setErrors({ ...errors, impression: '' });
+                    }
+                  }}
                   placeholder="Ceritakan kesan Anda selama magang di PLN..."
                   rows={4}
+                  className={errors.impression ? 'border-red-500 focus-visible:border-red-500' : ''}
                   disabled={isLoading}
+                  required
                 />
+                {errors.impression && (
+                  <p className="text-red-500 text-sm mt-1">{errors.impression}</p>
+                )}
                 <p className="text-sm text-gray-500 mt-1">
                   Berbagi pengalaman dan pembelajaran yang didapat
                 </p>
               </div>
 
               <div>
-                <Label htmlFor="message">Pesan</Label>
+                <Label htmlFor="message" className={errors.message ? 'text-red-600' : ''}>
+                  Pesan <span className="text-red-500">*</span>
+                </Label>
                 <Textarea
                   id="message"
                   value={formData.message}
-                  onChange={(e) =>
-                    setFormData({ ...formData, message: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setFormData({ ...formData, message: e.target.value });
+                    if (errors.message) {
+                      setErrors({ ...errors, message: '' });
+                    }
+                  }}
                   placeholder="Pesan dan saran untuk PLN..."
                   rows={4}
+                  className={errors.message ? 'border-red-500 focus-visible:border-red-500' : ''}
                   disabled={isLoading}
+                  required
                 />
+                {errors.message && (
+                  <p className="text-red-500 text-sm mt-1">{errors.message}</p>
+                )}
                 <p className="text-sm text-gray-500 mt-1">
                   Sampaikan apresiasi atau saran untuk kemajuan PLN
                 </p>
@@ -705,12 +815,12 @@ export function AddIntern() {
                       onClick={() => !isLoading && galleryInputRef.current?.click()}
                       className={`aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors ${
                         isLoading 
-                          ? 'border-gray-200 bg-gray-50 cursor-not-allowed' 
-                          : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+                          ? 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-800 cursor-not-allowed' 
+                          : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-slate-800'
                       }`}
                     >
                       <Plus className="size-8 text-gray-400" />
-                      <p className="text-sm text-gray-500 mt-1">Tambah</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Tambah</p>
                     </div>
                   </div>
                 </div>
@@ -719,16 +829,16 @@ export function AddIntern() {
                   onClick={() => !isLoading && galleryInputRef.current?.click()}
                   className={`text-center py-12 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
                     isLoading 
-                      ? 'border-gray-200 bg-gray-50 cursor-not-allowed' 
-                      : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+                      ? 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-800 cursor-not-allowed' 
+                      : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-slate-800'
                   }`}
                 >
                   <div className="flex flex-col items-center gap-3">
-                    <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center">
                       <Image className="size-8 text-gray-400" />
                     </div>
                     <div>
-                      <p className="text-gray-500 font-medium">Belum ada foto kenangan</p>
+                      <p className="text-gray-500 dark:text-gray-300 font-medium">Belum ada foto kenangan</p>
                       <p className="text-sm text-gray-400">Klik di sini atau tombol di atas untuk menambah foto</p>
                     </div>
                   </div>

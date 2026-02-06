@@ -48,8 +48,8 @@ export function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="text-gray-600">Overview sistem PLN Intern Management</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+        <p className="text-gray-600 dark:text-gray-400">Overview sistem PLN Intern Management</p>
       </div>
 
       {/* Stats Grid */}
@@ -64,9 +64,9 @@ export function AdminDashboard() {
                     <Icon className="size-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
-                    <p className="text-xs text-gray-500">{stat.description}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{stat.title}</p>
+                    <p className="text-2xl font-bold dark:text-white">{stat.value}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500">{stat.description}</p>
                   </div>
                 </div>
               </CardContent>
@@ -84,7 +84,7 @@ export function AdminDashboard() {
           <div className="space-y-4">
             {mentorStats.slice(0, 5).map((mentor, index) => (
               <div key={mentor.id} className="flex items-center gap-4">
-                <div className="flex size-8 items-center justify-center rounded-full bg-gray-200 text-sm font-bold">
+                <div className="flex size-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-sm font-bold">
                   {index + 1}
                 </div>
                 <img
@@ -93,12 +93,12 @@ export function AdminDashboard() {
                   className="size-10 rounded-full object-cover"
                 />
                 <div className="flex-1">
-                  <p className="font-medium">{mentor.name}</p>
-                  <p className="text-sm text-gray-600">{mentor.division}</p>
+                  <p className="font-medium dark:text-white">{mentor.name}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{mentor.division}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-blue-600">{mentor.internCount}</p>
-                  <p className="text-xs text-gray-500">intern</p>
+                  <p className="font-bold text-blue-600 dark:text-blue-400">{mentor.internCount}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500">intern</p>
                 </div>
               </div>
             ))}

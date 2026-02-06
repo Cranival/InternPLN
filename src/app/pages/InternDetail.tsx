@@ -35,7 +35,7 @@ export function InternDetail() {
   const mentor = getMentorById(intern.mentorId);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       <div className="container mx-auto px-4 py-8">
         <Link to="/intern">
           <Button variant="ghost" className="mb-6 gap-2">
@@ -119,20 +119,20 @@ export function InternDetail() {
                 </h3>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {intern.email && (
-                    <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
-                      <Mail className="size-4 text-gray-400" />
+                    <div className="flex items-center gap-3 rounded-lg bg-gray-50 dark:bg-slate-800 dark:border dark:border-slate-700 p-3">
+                      <Mail className="size-4 text-gray-400 dark:text-gray-300" />
                       <div>
-                        <p className="text-xs text-gray-600">Email</p>
-                        <p className="font-medium">{intern.email}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">Email</p>
+                        <p className="font-medium dark:text-white">{intern.email}</p>
                       </div>
                     </div>
                   )}
                   {intern.socialMedia && (
-                    <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3 sm:col-span-2">
-                      <User className="size-4 text-gray-400" />
+                    <div className="flex items-center gap-3 rounded-lg bg-gray-50 dark:bg-slate-800 dark:border dark:border-slate-700 p-3 sm:col-span-2">
+                      <User className="size-4 text-gray-400 dark:text-gray-300" />
                       <div>
-                        <p className="text-xs text-gray-600">Sosial Media</p>
-                        <p className="font-medium">{intern.socialMedia}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">Sosial Media</p>
+                        <p className="font-medium dark:text-white">{intern.socialMedia}</p>
                       </div>
                     </div>
                   )}
@@ -144,9 +144,9 @@ export function InternDetail() {
             {intern.impression && (
               <Card>
                 <CardContent className="p-6">
-                  <h3 className="mb-4 font-semibold">Kesan</h3>
-                  <div className="rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
-                    <p className="text-gray-700 leading-relaxed">
+                  <h3 className="mb-4 font-semibold dark:text-white">Kesan</h3>
+                  <div className="rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 dark:border dark:border-slate-600 p-4">
+                    <p className="text-gray-700 dark:text-gray-200 leading-relaxed">
                       {intern.impression}
                     </p>
                   </div>
@@ -158,9 +158,9 @@ export function InternDetail() {
             {intern.message && (
               <Card>
                 <CardContent className="p-6">
-                  <h3 className="mb-4 font-semibold">Pesan</h3>
-                  <div className="rounded-lg bg-gradient-to-br from-green-50 to-emerald-50 p-4">
-                    <p className="text-gray-700 leading-relaxed">
+                  <h3 className="mb-4 font-semibold dark:text-white">Pesan</h3>
+                  <div className="rounded-lg bg-gradient-to-br from-green-50 to-emerald-50 dark:from-slate-800 dark:to-slate-700 dark:border dark:border-slate-600 p-4">
+                    <p className="text-gray-700 dark:text-gray-200 leading-relaxed">
                       {intern.message}
                     </p>
                   </div>

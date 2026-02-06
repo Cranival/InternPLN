@@ -80,10 +80,10 @@ export function MentorDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="mb-2 text-2xl font-bold text-gray-900">
+        <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
           Dashboard Mentor
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-400">
           Selamat datang, {currentMentor.name}
         </p>
       </div>
@@ -115,8 +115,8 @@ export function MentorDashboard() {
                     <Icon className="size-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{stat.title}</p>
+                    <p className="text-2xl font-bold dark:text-white">{stat.value}</p>
                   </div>
                 </div>
               </CardContent>
@@ -139,11 +139,19 @@ export function MentorDashboard() {
             ) : (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={yearChartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="year" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#2563eb" radius={[8, 8, 0, 0]} />
+                  <CartesianGrid strokeDasharray="3 3" className="dark:opacity-30" />
+                  <XAxis dataKey="year" className="dark:fill-gray-300" tick={{ fill: 'currentColor' }} />
+                  <YAxis className="dark:fill-gray-300" tick={{ fill: 'currentColor' }} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'var(--background)', 
+                      borderColor: 'var(--border)',
+                      borderRadius: '8px'
+                    }}
+                    labelStyle={{ color: 'var(--foreground)' }}
+                    cursor={{ fill: 'rgba(59, 130, 246, 0.15)' }}
+                  />
+                  <Bar dataKey="count" fill="#3b82f6" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -164,17 +172,17 @@ export function MentorDashboard() {
               <div className="space-y-3">
                 {topSchools.map((school, index) => (
                   <div key={school.school} className="flex items-center gap-4">
-                    <div className="flex size-8 items-center justify-center rounded-full bg-blue-100 font-semibold text-blue-700">
+                    <div className="flex size-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50 font-semibold text-blue-700 dark:text-blue-300">
                       {index + 1}
                     </div>
                     <div className="flex-1">
                       <div className="mb-1 flex items-center justify-between">
-                        <span className="font-medium">{school.school}</span>
-                        <span className="text-sm text-gray-600">
+                        <span className="font-medium dark:text-white">{school.school}</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
                           {school.count} intern
                         </span>
                       </div>
-                      <div className="h-2 overflow-hidden rounded-full bg-gray-200">
+                      <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-slate-700">
                         <div
                           className="h-full rounded-full bg-blue-600"
                           style={{

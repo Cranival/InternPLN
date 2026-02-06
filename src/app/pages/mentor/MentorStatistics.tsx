@@ -1,5 +1,6 @@
 import { useAuth } from '../../contexts/AuthContext';
 import { useData } from '../../contexts/DataContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import {
@@ -22,6 +23,8 @@ import { toast } from 'sonner';
 export function MentorStatistics() {
   const { currentMentor } = useAuth();
   const { interns } = useData();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
 
   if (!currentMentor) return null;
 
@@ -138,10 +141,17 @@ export function MentorStatistics() {
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={yearData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="year" />
-                  <YAxis />
-                  <Tooltip />
+                  <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#334155' : '#e2e8f0'} />
+                  <XAxis dataKey="year" stroke={isDark ? '#94a3b8' : '#64748b'} />
+                  <YAxis stroke={isDark ? '#94a3b8' : '#64748b'} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                      borderColor: isDark ? '#334155' : '#e2e8f0',
+                      borderRadius: '8px',
+                      color: isDark ? '#f1f5f9' : '#1e293b'
+                    }}
+                  />
                   <Line
                     type="monotone"
                     dataKey="count"
@@ -163,10 +173,18 @@ export function MentorStatistics() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={schoolData} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis dataKey="name" type="category" width={120} />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#334155' : '#e2e8f0'} />
+                    <XAxis type="number" stroke={isDark ? '#94a3b8' : '#64748b'} />
+                    <YAxis dataKey="name" type="category" width={120} stroke={isDark ? '#94a3b8' : '#64748b'} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                        borderColor: isDark ? '#334155' : '#e2e8f0',
+                        borderRadius: '8px',
+                        color: isDark ? '#f1f5f9' : '#1e293b'
+                      }}
+                      cursor={{ fill: isDark ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.1)' }}
+                    />
                     <Bar dataKey="value" fill="#2563eb" radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -198,7 +216,14 @@ export function MentorStatistics() {
                         />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                        borderColor: isDark ? '#334155' : '#e2e8f0',
+                        borderRadius: '8px',
+                        color: isDark ? '#f1f5f9' : '#1e293b'
+                      }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>

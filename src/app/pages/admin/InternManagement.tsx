@@ -205,8 +205,8 @@ export function InternManagement() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Kelola Semua Intern</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Kelola Semua Intern</h1>
+          <p className="text-gray-600 dark:text-gray-400">
             Lihat dan kelola data semua intern dari semua mentor
           </p>
         </div>
@@ -218,13 +218,13 @@ export function InternManagement() {
 
       {/* Pending Alert */}
       {pendingCount > 0 && (
-        <div className="rounded-lg bg-amber-50 border border-amber-200 p-4 flex items-center gap-3">
-          <Clock className="size-5 text-amber-600" />
+        <div className="rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4 flex items-center gap-3">
+          <Clock className="size-5 text-amber-600 dark:text-amber-400" />
           <div>
-            <p className="font-medium text-amber-800">
+            <p className="font-medium text-amber-800 dark:text-amber-300">
               {pendingCount} intern menunggu approval
             </p>
-            <p className="text-sm text-amber-600">
+            <p className="text-sm text-amber-600 dark:text-amber-400">
               Filter status "Pending" untuk melihat dan melakukan approval
             </p>
           </div>
@@ -490,18 +490,18 @@ export function InternManagement() {
                 </div>
 
                 <div>
-                  <p className="mb-1 text-sm text-gray-600">Alamat</p>
-                  <p className="rounded-lg bg-gray-50 p-3 text-sm">{selectedIntern.address}</p>
+                  <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">Alamat</p>
+                  <p className="rounded-lg bg-gray-50 dark:bg-slate-800 p-3 text-sm">{selectedIntern.address}</p>
                 </div>
 
                 <div>
-                  <p className="mb-1 text-sm text-gray-600">Kesan</p>
-                  <p className="rounded-lg bg-gray-50 p-3 text-sm">{selectedIntern.impression}</p>
+                  <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">Kesan</p>
+                  <p className="rounded-lg bg-gray-50 dark:bg-slate-800 p-3 text-sm">{selectedIntern.impression}</p>
                 </div>
 
                 <div>
-                  <p className="mb-1 text-sm text-gray-600">Pesan</p>
-                  <p className="rounded-lg bg-gray-50 p-3 text-sm">{selectedIntern.message}</p>
+                  <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">Pesan</p>
+                  <p className="rounded-lg bg-gray-50 dark:bg-slate-800 p-3 text-sm">{selectedIntern.message}</p>
                 </div>
 
                 {/* Action Buttons for Pending */}

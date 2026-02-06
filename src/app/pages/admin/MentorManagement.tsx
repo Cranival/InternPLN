@@ -600,8 +600,8 @@ export function MentorManagement() {
               <p className="text-xs text-gray-500">Minimal 6 karakter</p>
             </div>
 
-            <div className="rounded-lg bg-amber-50 border border-amber-200 p-3">
-              <p className="text-xs text-amber-800">
+            <div className="rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-3">
+              <p className="text-xs text-amber-800 dark:text-amber-300">
                 ⚠️ Password lama akan dihapus dan diganti dengan password baru.
               </p>
             </div>
@@ -690,8 +690,8 @@ export function MentorManagement() {
               </div>
             </div>
 
-            <div className="rounded-lg bg-amber-50 border border-amber-200 p-3">
-              <p className="text-xs text-amber-800">
+            <div className="rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-3">
+              <p className="text-xs text-amber-800 dark:text-amber-300">
                 ⚠️ <strong>Penting:</strong> Password ini hanya ditampilkan sekali. 
                 Pastikan mentor mencatat atau langsung mengubah password setelah login pertama.
               </p>

@@ -346,18 +346,6 @@ export const mockInterns: Intern[] = [
   },
 ];
 
-// Mock Gallery Photos
-export const mockGalleryPhotos: GalleryPhoto[] = mockInterns.flatMap((intern) =>
-  intern.galleryPhotos.map((photo, index) => ({
-    id: `${intern.id}-${index}`,
-    internId: intern.id,
-    internName: intern.name,
-    photo,
-    caption: `Kegiatan magang ${intern.name} di ${intern.division}`,
-    uploadedAt: intern.createdAt,
-  }))
-);
-
 // Statistics helpers
 export const getInternsByYear = (interns: Intern[]) => {
   const yearCounts: { [year: string]: number } = {};
@@ -368,26 +356,4 @@ export const getInternsByYear = (interns: Intern[]) => {
   return Object.entries(yearCounts)
     .map(([year, count]) => ({ year, count }))
     .sort((a, b) => a.year.localeCompare(b.year));
-};
-
-export const getInternsBySchool = (interns: Intern[]) => {
-  const schoolCounts: { [school: string]: number } = {};
-  interns.forEach((intern) => {
-    schoolCounts[intern.school] = (schoolCounts[intern.school] || 0) + 1;
-  });
-  return Object.entries(schoolCounts)
-    .map(([school, count]) => ({ school, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
-};
-
-export const getInternsByMajor = (interns: Intern[]) => {
-  const majorCounts: { [major: string]: number } = {};
-  interns.forEach((intern) => {
-    majorCounts[intern.major] = (majorCounts[intern.major] || 0) + 1;
-  });
-  return Object.entries(majorCounts)
-    .map(([major, count]) => ({ major, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
 };

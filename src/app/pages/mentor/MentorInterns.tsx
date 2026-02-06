@@ -97,7 +97,7 @@ export function MentorInterns() {
       new Date(intern.periodStart).getFullYear().toString() === filterYear;
 
     return matchesSearch && matchesYear;
-  });
+  }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   // Open edit modal
   const handleEdit = (intern: Intern, e: React.MouseEvent) => {
@@ -205,10 +205,10 @@ export function MentorInterns() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="mb-2 text-2xl font-bold text-gray-900">
+        <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
           Data Intern Bimbingan
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-300">
           Daftar intern yang pernah Anda bimbing
         </p>
       </div>
@@ -257,65 +257,75 @@ export function MentorInterns() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredInterns.map((intern) => (
             <Card
               key={intern.id}
-              className="group cursor-pointer overflow-hidden transition hover:shadow-lg"
+              className="group cursor-pointer overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-0 shadow-md bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm"
               onClick={() => setSelectedIntern(intern)}
             >
-              <div className="relative aspect-[4/3] overflow-hidden">
-                <img
-                  src={intern.photo}
-                  alt={intern.name}
-                  className="size-full object-cover transition group-hover:scale-105"
-                />
-                {/* Action Buttons Overlay */}
-                <div className="absolute right-2 top-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    className="size-8 bg-white/90 hover:bg-white"
-                    onClick={(e) => handleEdit(intern, e)}
-                    title="Edit"
-                  >
-                    <Pencil className="size-4 text-blue-600" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    className="size-8 bg-white/90 hover:bg-red-50"
-                    onClick={(e) => handleDeleteClick(intern, e)}
-                    title="Hapus"
-                  >
-                    <Trash2 className="size-4 text-red-600" />
-                  </Button>
-                </div>
-              </div>
-              <CardContent className="p-4">
-                <h3 className="mb-1 font-semibold">{intern.name}</h3>
-                <p className="mb-2 text-sm text-gray-600 line-clamp-1">
-                  {intern.school}
-                </p>
-                <div className="mb-2 inline-block rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
-                  {intern.division}
-                </div>
-                <div className="mt-3 border-t pt-3 text-xs text-gray-500">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="size-3" />
-                    <span>
-                      {new Date(intern.periodStart).toLocaleDateString(
-                        'id-ID',
-                        { month: 'short', year: 'numeric' }
-                      )}{' '}
-                      -{' '}
-                      {new Date(intern.periodEnd).toLocaleDateString('id-ID', {
-                        month: 'short',
-                        year: 'numeric',
-                      })}
-                    </span>
+              <CardContent className="p-6">
+                <div className="mb-4 flex justify-center">
+                  <div className="relative">
+                    <img
+                      src={intern.photo}
+                      alt={intern.name}
+                      className="size-28 rounded-3xl object-cover ring-4 ring-blue-100 shadow-lg transition-transform group-hover:scale-105"
+                    />
+                    <div className="absolute -bottom-1 -right-1 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 p-2.5 shadow-lg ring-4 ring-white dark:ring-slate-900">
+                      <GraduationCap className="size-5 text-white" />
+                    </div>
+                    {/* Action Buttons Overlay */}
+                    <div className="absolute -top-1 -right-1 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        className="size-7 bg-white/90 hover:bg-white shadow-md"
+                        onClick={(e) => handleEdit(intern, e)}
+                        title="Edit"
+                      >
+                        <Pencil className="size-3.5 text-blue-600" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        className="size-7 bg-white/90 hover:bg-red-50 shadow-md"
+                        onClick={(e) => handleDeleteClick(intern, e)}
+                        title="Hapus"
+                      >
+                        <Trash2 className="size-3.5 text-red-600" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
+
+                <div className="text-center">
+                  <h3 className="mb-1 font-semibold text-foreground">{intern.name}</h3>
+                  <p className="mb-2 text-xs text-muted-foreground line-clamp-1">
+                    {intern.school}
+                  </p>
+                  <div className="mb-3 inline-block rounded-full bg-gradient-to-r from-blue-50 to-blue-100 px-3 py-1 text-xs font-medium text-blue-700 shadow-sm">
+                    {intern.division}
+                  </div>
+                </div>
+
+                <div className="mb-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <Calendar className="size-4 text-blue-500" />
+                  <span>
+                    {new Date(intern.periodStart).toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })} - {new Date(intern.periodEnd).toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })}
+                  </span>
+                </div>
+
+                <Button
+                  className="w-full gap-2 shadow-md shadow-blue-500/20 hover:shadow-lg transition-all"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedIntern(intern);
+                  }}
+                >
+                  Lihat Detail
+                  <Search className="size-4" />
+                </Button>
               </CardContent>
             </Card>
           ))}
@@ -386,22 +396,22 @@ export function MentorInterns() {
                 </div>
 
                 <div>
-                  <p className="mb-1 text-sm text-gray-600">Alamat</p>
-                  <p className="rounded-lg bg-gray-50 p-3 text-sm">
+                  <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">Alamat</p>
+                  <p className="rounded-lg bg-gray-50 dark:bg-slate-800 p-3 text-sm">
                     {selectedIntern.address}
                   </p>
                 </div>
 
                 <div>
-                  <p className="mb-1 text-sm text-gray-600">Kesan</p>
-                  <p className="rounded-lg bg-gray-50 p-3 text-sm">
+                  <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">Kesan</p>
+                  <p className="rounded-lg bg-gray-50 dark:bg-slate-800 p-3 text-sm">
                     {selectedIntern.impression}
                   </p>
                 </div>
 
                 <div>
-                  <p className="mb-1 text-sm text-gray-600">Pesan</p>
-                  <p className="rounded-lg bg-gray-50 p-3 text-sm">
+                  <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">Pesan</p>
+                  <p className="rounded-lg bg-gray-50 dark:bg-slate-800 p-3 text-sm">
                     {selectedIntern.message}
                   </p>
                 </div>
