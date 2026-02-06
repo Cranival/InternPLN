@@ -12,7 +12,8 @@ import { toast } from 'sonner';
 
 interface InternStatistics {
   total: number;
-  approved: number;
+  active: number;
+  alumni: number;
   pending: number;
   byDivision: Record<string, number>;
   byMentor: Record<string, number>;
@@ -192,7 +193,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const result = InternDB.approve(id);
     
     if (result.success && result.data) {
-      setInterns(prev => prev.map(i => i.id === id ? { ...i, status: 'approved' } : i));
+      // Use status from result.data (will be 'active' or 'alumni' based on period)
+      setInterns(prev => prev.map(i => i.id === id ? result.data! : i));
       
       // Update mentor intern count
       const intern = interns.find(i => i.id === id);
@@ -209,7 +211,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       setSyncStatus(DatabaseSync.getStatus());
       return true;
     } else {
-      toast.error(result.error || 'Gagal menyetujui intern');
+      toast.error(result.error || 'Gagal memverifikasi peserta');
       return false;
     }
   }, [interns]);
@@ -305,7 +307,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
     return {
       total: interns.length,
-      approved: interns.filter(i => i.status === 'approved').length,
+      active: interns.filter(i => i.status === 'active').length,
+      alumni: interns.filter(i => i.status === 'alumni').length,
       pending: interns.filter(i => i.status === 'pending').length,
       byDivision,
       byMentor,

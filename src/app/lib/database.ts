@@ -146,7 +146,7 @@ export const InternDB = {
   },
 
   // Get interns by status
-  getByStatus(status: 'approved' | 'pending'): DatabaseResult<Intern[]> {
+  getByStatus(status: 'pending' | 'active' | 'alumni' | 'rejected'): DatabaseResult<Intern[]> {
     try {
       const result = this.getAll();
       if (!result.success) return { success: false, error: result.error };
@@ -240,9 +240,22 @@ export const InternDB = {
     }
   },
 
-  // Approve intern
+  // Approve intern - set status based on period
   approve(id: string): DatabaseResult<Intern> {
-    return this.update(id, { status: 'approved' });
+    const internResult = this.getById(id);
+    if (!internResult.success || !internResult.data) {
+      return { success: false, error: 'Intern tidak ditemukan' };
+    }
+    
+    const intern = internResult.data;
+    const today = new Date();
+    const periodEnd = new Date(intern.periodEnd);
+    
+    // Jika periode sudah selesai, set sebagai alumni
+    // Jika masih dalam periode, set sebagai active
+    const newStatus = periodEnd < today ? 'alumni' : 'active';
+    
+    return this.update(id, { status: newStatus });
   },
 
   // Reject intern (delete)
@@ -278,7 +291,8 @@ export const InternDB = {
   // Get statistics
   getStatistics(): DatabaseResult<{
     total: number;
-    approved: number;
+    active: number;
+    alumni: number;
     pending: number;
     byDivision: Record<string, number>;
     byMentor: Record<string, number>;
@@ -300,7 +314,8 @@ export const InternDB = {
         success: true,
         data: {
           total: interns.length,
-          approved: interns.filter((i) => i.status === 'approved').length,
+          active: interns.filter((i) => i.status === 'active').length,
+          alumni: interns.filter((i) => i.status === 'alumni').length,
           pending: interns.filter((i) => i.status === 'pending').length,
           byDivision,
           byMentor,
@@ -444,13 +459,13 @@ export const MentorDB = {
     }
   },
 
-  // Update intern count for mentor
+  // Update intern count for mentor (count active + alumni)
   updateInternCount(mentorId: string): DatabaseResult<Mentor> {
     const internResult = InternDB.getByMentorId(mentorId);
     if (!internResult.success) return { success: false, error: internResult.error };
 
-    const approvedCount = internResult.data?.filter((i) => i.status === 'approved').length || 0;
-    return this.update(mentorId, { totalInterns: approvedCount });
+    const verifiedCount = internResult.data?.filter((i) => i.status === 'active' || i.status === 'alumni').length || 0;
+    return this.update(mentorId, { totalInterns: verifiedCount });
   },
 };
 

@@ -18,8 +18,8 @@ export function PublicLayout() {
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900 dark:text-white">PLN Intern Portal</p>
-                <p className="text-xs text-gray-500 dark:text-slate-400">Sistem Manajemen Data Intern & PKL</p>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">PLN Magang Portal</p>
+                  <p className="text-xs text-gray-500 dark:text-slate-400">Sistem Manajemen Data Peserta Magang & PKL</p>
               </div>
             </div>
             <p className="text-xs text-gray-600 dark:text-slate-400">

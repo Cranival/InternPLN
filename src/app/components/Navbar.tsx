@@ -18,7 +18,7 @@ export function Navbar() {
   const navLinks = [
     { path: '/', label: 'Dashboard', icon: Zap },
     { path: '/mentor', label: 'Mentor', icon: Users },
-    { path: '/intern', label: 'Intern', icon: GraduationCap },
+    { path: '/intern', label: 'Data Peserta', icon: GraduationCap },
   ];
 
   const isActive = (path: string) => {
@@ -40,8 +40,8 @@ export function Navbar() {
               <Zap className="size-5 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-base font-bold text-white tracking-tight">PLN Intern</span>
-              <span className="text-xs text-blue-200">Management System</span>
+              <span className="text-base font-bold text-white tracking-tight">PLN Magang</span>
+              <span className="text-xs text-blue-200">Database Peserta</span>
             </div>
           </Link>
 
@@ -88,7 +88,7 @@ export function Navbar() {
                     <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-800 to-blue-900 shadow-md">
                       <Zap className="size-5 text-white" />
                     </div>
-                    <span className="text-lg font-bold text-blue-900">PLN Intern</span>
+                    <span className="text-lg font-bold text-blue-900">PLN Magang</span>
                   </SheetTitle>
                 </SheetHeader>
                 

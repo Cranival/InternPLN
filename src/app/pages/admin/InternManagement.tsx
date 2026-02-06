@@ -137,7 +137,7 @@ export function InternManagement() {
         mentor?.name || '-',
         new Date(intern.periodStart).toLocaleDateString('id-ID'),
         new Date(intern.periodEnd).toLocaleDateString('id-ID'),
-        intern.status === 'approved' ? 'Disetujui' : 'Pending',
+        intern.status === 'active' ? 'Aktif' : intern.status === 'alumni' ? 'Alumni' : intern.status === 'rejected' ? 'Ditolak' : 'Pending',
         intern.email,
         intern.phone,
         intern.address.replace(/,/g, ';'),
@@ -154,7 +154,7 @@ export function InternManagement() {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `data-semua-intern-${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `data-semua-peserta-${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
     URL.revokeObjectURL(link.href);
 
@@ -174,7 +174,7 @@ export function InternManagement() {
         refreshData();
       }
     } catch (error) {
-      toast.error('Gagal menyetujui intern');
+      toast.error('Gagal menyetujui peserta');
     } finally {
       setIsSubmitting(false);
     }
@@ -193,7 +193,7 @@ export function InternManagement() {
         refreshData();
       }
     } catch (error) {
-      toast.error('Gagal menolak intern');
+      toast.error('Gagal menolak peserta');
     } finally {
       setIsSubmitting(false);
     }
@@ -259,8 +259,10 @@ export function InternManagement() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Semua Status</SelectItem>
-                  <SelectItem value="approved">Disetujui</SelectItem>
+                  <SelectItem value="active">Aktif</SelectItem>
+                  <SelectItem value="alumni">Alumni</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="rejected">Ditolak</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -310,7 +312,7 @@ export function InternManagement() {
 
       {/* Results Count */}
       <div className="text-sm text-gray-600">
-        Menampilkan {filteredInterns.length} dari {interns.length} intern
+        Menampilkan {filteredInterns.length} dari {interns.length} peserta
       </div>
 
       {/* Intern Table */}
@@ -318,14 +320,14 @@ export function InternManagement() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <GraduationCap className="size-5" />
-            Daftar Intern
+            Daftar Peserta
           </CardTitle>
         </CardHeader>
         <CardContent>
           {filteredInterns.length === 0 ? (
             <div className="py-12 text-center">
               <GraduationCap className="mx-auto mb-4 size-12 text-gray-400" />
-              <p className="text-gray-600">Tidak ada data intern</p>
+              <p className="text-gray-600">Tidak ada data peserta</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -364,10 +366,20 @@ export function InternManagement() {
                           {new Date(intern.periodStart).toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })}
                         </TableCell>
                         <TableCell>
-                          {intern.status === 'approved' ? (
+                          {intern.status === 'active' ? (
                             <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
                               <CheckCircle className="size-3" />
-                              Disetujui
+                              Aktif
+                            </span>
+                          ) : intern.status === 'alumni' ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
+                              <CheckCircle className="size-3" />
+                              Alumni
+                            </span>
+                          ) : intern.status === 'rejected' ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">
+                              <XCircle className="size-3" />
+                              Ditolak
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700">
@@ -392,7 +404,7 @@ export function InternManagement() {
                                   size="icon"
                                   variant="ghost"
                                   onClick={() => setApproveConfirm(intern)}
-                                  title="Setujui"
+                                  title="Verifikasi"
                                 >
                                   <CheckCircle className="size-4 text-green-600" />
                                 </Button>
@@ -424,7 +436,7 @@ export function InternManagement() {
           {selectedIntern && (
             <>
               <DialogHeader>
-                <DialogTitle>Detail Intern</DialogTitle>
+                <DialogTitle>Detail Peserta</DialogTitle>
               </DialogHeader>
 
               <div className="space-y-4">
@@ -438,10 +450,20 @@ export function InternManagement() {
                     <h3 className="text-xl font-bold">{selectedIntern.name}</h3>
                     <p className="text-sm text-gray-600">{selectedIntern.school}</p>
                     <div className="mt-2">
-                      {selectedIntern.status === 'approved' ? (
+                      {selectedIntern.status === 'active' ? (
                         <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
                           <CheckCircle className="size-3" />
-                          Disetujui
+                          Aktif
+                        </span>
+                      ) : selectedIntern.status === 'alumni' ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
+                          <CheckCircle className="size-3" />
+                          Alumni
+                        </span>
+                      ) : selectedIntern.status === 'rejected' ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">
+                          <XCircle className="size-3" />
+                          Ditolak
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700">
@@ -515,7 +537,7 @@ export function InternManagement() {
                       }}
                     >
                       <CheckCircle className="size-4" />
-                      Setujui
+                      Verifikasi
                     </Button>
                     <Button
                       variant="destructive"
@@ -542,11 +564,11 @@ export function InternManagement() {
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-green-600">
               <CheckCircle className="size-5" />
-              Konfirmasi Approval
+              Konfirmasi Verifikasi
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Apakah Anda yakin ingin menyetujui <strong>{approveConfirm?.name}</strong>?
-              Data intern akan tampil di halaman publik.
+              Apakah Anda yakin ingin memverifikasi <strong>{approveConfirm?.name}</strong>?
+              Data peserta akan tampil di halaman publik.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -556,7 +578,7 @@ export function InternManagement() {
               disabled={isSubmitting}
               className="bg-green-600 hover:bg-green-700"
             >
-              {isSubmitting ? 'Memproses...' : 'Ya, Setujui'}
+              {isSubmitting ? 'Memproses...' : 'Ya, Verifikasi'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -572,7 +594,7 @@ export function InternManagement() {
             </AlertDialogTitle>
             <AlertDialogDescription>
               Apakah Anda yakin ingin menolak <strong>{rejectConfirm?.name}</strong>?
-              Data intern akan dihapus dari sistem.
+              Data peserta akan dihapus dari sistem.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -20,12 +20,12 @@ export function InternList() {
   const [filterDivision, setFilterDivision] = useState<string>('all');
   const [filterMentor, setFilterMentor] = useState<string>('all');
 
-  const approvedInterns = interns.filter((i) => i.status === 'approved');
+  const verifiedInterns = interns.filter((i) => i.status === 'active' || i.status === 'alumni');
 
   // Get unique years
   const years = Array.from(
     new Set(
-      approvedInterns.map((i) =>
+      verifiedInterns.map((i) =>
         new Date(i.periodStart).getFullYear().toString()
       )
     )
@@ -33,7 +33,7 @@ export function InternList() {
 
   // Get unique divisions
   const divisions = Array.from(
-    new Set(approvedInterns.map((i) => i.division))
+    new Set(verifiedInterns.map((i) => i.division))
   ).sort();
 
   // Check if any filter is active
@@ -48,7 +48,7 @@ export function InternList() {
   };
 
   // Filter interns
-  const filteredInterns = approvedInterns
+  const filteredInterns = verifiedInterns
     .filter((intern) => {
       const matchesSearch =
         intern.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -77,16 +77,16 @@ export function InternList() {
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="mb-1 text-3xl font-bold tracking-tight text-foreground">
-            Data Alumni Intern & PKL
+            Data Peserta Magang
           </h1>
           <p className="text-muted-foreground">
-            Database lengkap mahasiswa magang dan siswa PKL PLN
+            Database peserta dan alumni program magang PLN
           </p>
         </div>
         <Link to="/intern/tambah">
           <Button className="gap-3 px-8 py-4 text-lg shadow-md shadow-blue-500/20 hover:shadow-lg transition-all">
             <Plus className="size-6" />
-            Tambah Intern
+            Tambah Peserta
           </Button>
         </Link>
       </div>
@@ -173,7 +173,7 @@ export function InternList() {
 
       {/* Results Count */}
       <div className="mb-4 text-sm text-muted-foreground">
-        Menampilkan {filteredInterns.length} dari {approvedInterns.length} intern
+        Menampilkan {filteredInterns.length} dari {verifiedInterns.length} peserta
       </div>
 
       {/* Intern Grid */}
@@ -183,7 +183,7 @@ export function InternList() {
             <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200">
               <GraduationCap className="size-8 text-gray-400" />
             </div>
-            <p className="text-muted-foreground">Tidak ada data intern ditemukan</p>
+            <p className="text-muted-foreground">Tidak ada data peserta ditemukan</p>
           </CardContent>
         </Card>
       ) : (

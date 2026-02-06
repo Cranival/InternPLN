@@ -37,12 +37,12 @@ export function MentorLayout() {
     },
     {
       path: '/mentor/approval',
-      label: 'Approval Intern',
+      label: 'Verifikasi Peserta',
       icon: CheckCircle,
     },
     {
       path: '/mentor/interns',
-      label: 'Data Intern',
+      label: 'Data Peserta',
       icon: Users,
     },
     {

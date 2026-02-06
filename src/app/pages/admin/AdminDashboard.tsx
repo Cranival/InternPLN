@@ -5,7 +5,9 @@ import { Users, GraduationCap, Clock, CheckCircle } from 'lucide-react';
 export function AdminDashboard() {
   const { interns, mentors } = useData();
 
-  const approvedInterns = interns.filter((i) => i.status === 'approved');
+  const verifiedInterns = interns.filter((i) => i.status === 'active' || i.status === 'alumni');
+  const activeInterns = interns.filter((i) => i.status === 'active');
+  const alumniInterns = interns.filter((i) => i.status === 'alumni');
   const pendingInterns = interns.filter((i) => i.status === 'pending');
 
   const stats = [
@@ -17,21 +19,21 @@ export function AdminDashboard() {
       description: 'Mentor terdaftar',
     },
     {
-      title: 'Total Intern',
+      title: 'Total Peserta',
       value: interns.length,
       icon: GraduationCap,
       color: 'bg-green-500',
-      description: 'Semua intern',
+      description: 'Semua peserta',
     },
     {
-      title: 'Intern Disetujui',
-      value: approvedInterns.length,
+      title: 'Peserta Terverifikasi',
+      value: verifiedInterns.length,
       icon: CheckCircle,
       color: 'bg-emerald-500',
-      description: 'Status approved',
+      description: `${activeInterns.length} aktif, ${alumniInterns.length} alumni`,
     },
     {
-      title: 'Menunggu Approval',
+      title: 'Menunggu Verifikasi',
       value: pendingInterns.length,
       icon: Clock,
       color: 'bg-amber-500',
@@ -42,14 +44,14 @@ export function AdminDashboard() {
   // Mentor with most interns
   const mentorStats = mentors.map((mentor) => ({
     ...mentor,
-    internCount: interns.filter((i) => i.mentorId === mentor.id && i.status === 'approved').length,
+    internCount: interns.filter((i) => i.mentorId === mentor.id && (i.status === 'active' || i.status === 'alumni')).length,
   })).sort((a, b) => b.internCount - a.internCount);
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
-        <p className="text-gray-600 dark:text-gray-400">Overview sistem PLN Intern Management</p>
+        <p className="text-gray-600 dark:text-gray-400">Overview sistem PLN Magang</p>
       </div>
 
       {/* Stats Grid */}
@@ -98,7 +100,7 @@ export function AdminDashboard() {
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-blue-600 dark:text-blue-400">{mentor.internCount}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-500">intern</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500">peserta</p>
                 </div>
               </div>
             ))}

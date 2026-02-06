@@ -15,16 +15,16 @@ export function InternDetail() {
   const { id } = useParams<{ id: string }>();
   const { interns, getMentorById } = useData();
 
-  const intern = interns.find((i) => i.id === id && i.status === 'approved');
+  const intern = interns.find((i) => i.id === id && (i.status === 'active' || i.status === 'alumni'));
 
   if (!intern) {
     return (
       <div className="container mx-auto px-4 py-8">
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-gray-600">Data intern tidak ditemukan</p>
+            <p className="text-gray-600">Data peserta tidak ditemukan</p>
             <Link to="/intern" className="mt-4 inline-block">
-              <Button>Kembali ke Daftar Intern</Button>
+              <Button>Kembali ke Daftar Peserta</Button>
             </Link>
           </CardContent>
         </Card>

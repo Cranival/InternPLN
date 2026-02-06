@@ -29,7 +29,7 @@ export function MentorStatistics() {
   if (!currentMentor) return null;
 
   const myInterns = interns.filter(
-    (i) => i.mentorId === currentMentor.id && i.status === 'approved'
+    (i) => i.mentorId === currentMentor.id && (i.status === 'active' || i.status === 'alumni')
   );
 
   // Stats by year
@@ -101,7 +101,7 @@ export function MentorStatistics() {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `data-intern-${currentMentor?.name.replace(/[^a-zA-Z0-9]/g, '_')}-${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `data-peserta-${currentMentor?.name.replace(/[^a-zA-Z0-9]/g, '_')}-${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
     URL.revokeObjectURL(link.href);
 
@@ -116,7 +116,7 @@ export function MentorStatistics() {
             Statistik Bimbingan
           </h1>
           <p className="text-gray-600">
-            Analisis data intern yang Anda bimbing
+            Analisis data peserta yang Anda bimbing
           </p>
         </div>
         <Button onClick={handleExport} className="gap-2">
@@ -133,10 +133,10 @@ export function MentorStatistics() {
         </Card>
       ) : (
         <>
-          {/* Trend Intern per Tahun */}
+          {/* Trend Peserta per Tahun */}
           <Card>
             <CardHeader>
-              <CardTitle>Trend Intern per Tahun</CardTitle>
+              <CardTitle>Trend Peserta per Tahun</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -250,7 +250,7 @@ export function MentorStatistics() {
                   </thead>
                   <tbody>
                     <tr className="border-b">
-                      <td className="px-4 py-3">Total Intern Dibimbing</td>
+                      <td className="px-4 py-3">Total Peserta Dibimbing</td>
                       <td className="px-4 py-3 text-right font-semibold">
                         {myInterns.length}
                       </td>

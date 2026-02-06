@@ -76,7 +76,7 @@ export function MentorInterns() {
   if (!currentMentor) return null;
 
   const myInterns = interns.filter(
-    (i) => i.mentorId === currentMentor.id && i.status === 'approved'
+    (i) => i.mentorId === currentMentor.id && (i.status === 'active' || i.status === 'alumni')
   );
 
   // Get unique years
@@ -167,11 +167,11 @@ export function MentorInterns() {
       });
 
       if (success) {
-        toast.success('Data intern berhasil diperbarui');
+        toast.success('Data peserta berhasil diperbarui');
         setEditingIntern(null);
       }
     } catch (error) {
-      toast.error('Gagal memperbarui data intern');
+      toast.error('Gagal memperbarui data peserta');
     } finally {
       setIsSubmitting(false);
     }
@@ -190,7 +190,7 @@ export function MentorInterns() {
         setSelectedIntern(null);
       }
     } catch (error) {
-      toast.error('Gagal menghapus data intern');
+      toast.error('Gagal menghapus data peserta');
     } finally {
       setIsSubmitting(false);
     }
@@ -206,10 +206,10 @@ export function MentorInterns() {
     <div className="space-y-6">
       <div>
         <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
-          Data Intern Bimbingan
+          Data Peserta Bimbingan
         </h1>
         <p className="text-gray-600 dark:text-gray-300">
-          Daftar intern yang pernah Anda bimbing
+          Daftar peserta magang yang pernah Anda bimbing
         </p>
       </div>
 
@@ -253,7 +253,7 @@ export function MentorInterns() {
         <Card>
           <CardContent className="py-12 text-center">
             <GraduationCap className="mx-auto mb-4 size-12 text-gray-400" />
-            <p className="text-gray-600">Tidak ada data intern ditemukan</p>
+            <p className="text-gray-600">Tidak ada data peserta ditemukan</p>
           </CardContent>
         </Card>
       ) : (
@@ -473,7 +473,7 @@ export function MentorInterns() {
       <Dialog open={!!editingIntern} onOpenChange={() => setEditingIntern(null)}>
         <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit Data Intern</DialogTitle>
+            <DialogTitle>Edit Data Peserta</DialogTitle>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">

@@ -21,7 +21,7 @@ export function AdminLayout() {
   const navItems = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/admin/mentors', label: 'Kelola Mentor', icon: Users },
-    { path: '/admin/interns', label: 'Kelola Intern', icon: GraduationCap },
+    { path: '/admin/interns', label: 'Kelola Peserta', icon: GraduationCap },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -36,7 +36,7 @@ export function AdminLayout() {
           </div>
           <div>
             <h1 className="text-base font-bold tracking-tight">Admin Panel</h1>
-            <p className="text-sm text-slate-400">PLN Intern System</p>
+            <p className="text-sm text-slate-400">PLN Magang</p>
           </div>
         </div>
 

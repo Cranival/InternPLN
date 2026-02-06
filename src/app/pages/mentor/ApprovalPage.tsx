@@ -38,12 +38,12 @@ export function ApprovalPage() {
         if (comment.trim()) {
           toast.success(
             <div>
-              <p className="font-semibold">Intern berhasil disetujui!</p>
+              <p className="font-semibold">Peserta berhasil diverifikasi!</p>
               <p className="text-sm text-gray-600">Komentar: {comment}</p>
             </div>
           );
         } else {
-          toast.success('Intern berhasil disetujui!');
+          toast.success('Peserta berhasil diverifikasi!');
         }
         setSelectedIntern(null);
         setComment('');
@@ -61,12 +61,12 @@ export function ApprovalPage() {
         if (comment.trim()) {
           toast.error(
             <div>
-              <p className="font-semibold">Intern ditolak</p>
+              <p className="font-semibold">Peserta ditolak</p>
               <p className="text-sm">Alasan: {comment}</p>
             </div>
           );
         } else {
-          toast.error('Intern ditolak dan dihapus dari sistem');
+          toast.error('Peserta ditolak dan dihapus dari sistem');
         }
         setSelectedIntern(null);
         setComment('');
@@ -85,10 +85,10 @@ export function ApprovalPage() {
     <div className="space-y-6">
       <div>
         <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
-          Approval Intern
+          Verifikasi Peserta
         </h1>
         <p className="text-gray-600 dark:text-gray-300">
-          Review dan approve data intern yang masuk
+          Review dan verifikasi data peserta magang yang masuk
         </p>
       </div>
 
@@ -97,7 +97,7 @@ export function ApprovalPage() {
           <CardContent className="py-12 text-center">
             <CheckCircle className="mx-auto mb-4 size-12 text-gray-400" />
             <p className="text-gray-600">
-              Tidak ada intern yang menunggu approval
+              Tidak ada peserta yang menunggu verifikasi
             </p>
           </CardContent>
         </Card>
@@ -156,7 +156,7 @@ export function ApprovalPage() {
           {intern && (
             <>
               <DialogHeader>
-                <DialogTitle>Review Data Intern</DialogTitle>
+                <DialogTitle>Review Data Peserta</DialogTitle>
               </DialogHeader>
 
               <div className="space-y-4">
@@ -256,13 +256,13 @@ export function ApprovalPage() {
                     id="comment"
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    placeholder="Tambahkan komentar atau catatan untuk intern ini..."
+                    placeholder="Tambahkan komentar atau catatan untuk peserta ini..."
                     rows={3}
                     disabled={isProcessing}
                     className="resize-none"
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Komentar akan ditampilkan saat menyetujui atau menolak intern
+                    Komentar akan ditampilkan saat memverifikasi atau menolak peserta
                   </p>
                 </div>
               </div>
@@ -298,7 +298,7 @@ export function ApprovalPage() {
                   ) : (
                     <CheckCircle className="size-4" />
                   )}
-                  Setujui
+                  Verifikasi
                 </Button>
               </DialogFooter>
             </>

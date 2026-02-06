@@ -22,17 +22,19 @@ export function MentorDashboard() {
   if (!currentMentor) return null;
 
   const myInterns = interns.filter((i) => i.mentorId === currentMentor.id);
-  const approvedInterns = myInterns.filter((i) => i.status === 'approved');
+  const verifiedInterns = myInterns.filter((i) => i.status === 'active' || i.status === 'alumni');
+  const activeInterns = myInterns.filter((i) => i.status === 'active');
+  const alumniInterns = myInterns.filter((i) => i.status === 'alumni');
   const pendingInterns = myInterns.filter((i) => i.status === 'pending');
 
   const currentYear = new Date().getFullYear();
-  const internsThisYear = approvedInterns.filter(
+  const internsThisYear = verifiedInterns.filter(
     (i) => new Date(i.periodStart).getFullYear() === currentYear
   );
 
   // Interns by year
   const internsByYear: { [year: string]: number } = {};
-  approvedInterns.forEach((intern) => {
+  verifiedInterns.forEach((intern) => {
     const year = new Date(intern.periodStart).getFullYear().toString();
     internsByYear[year] = (internsByYear[year] || 0) + 1;
   });
@@ -42,7 +44,7 @@ export function MentorDashboard() {
 
   // Interns by school
   const internsBySchool: { [school: string]: number } = {};
-  approvedInterns.forEach((intern) => {
+  verifiedInterns.forEach((intern) => {
     internsBySchool[intern.school] = (internsBySchool[intern.school] || 0) + 1;
   });
   const topSchools = Object.entries(internsBySchool)
@@ -53,18 +55,18 @@ export function MentorDashboard() {
   const stats = [
     {
       title: 'Total Dibimbing',
-      value: approvedInterns.length,
+      value: verifiedInterns.length,
       icon: Users,
       color: 'from-blue-500 to-blue-600',
     },
     {
-      title: 'Intern Tahun Ini',
+      title: 'Peserta Tahun Ini',
       value: internsThisYear.length,
       icon: TrendingUp,
       color: 'from-green-500 to-green-600',
     },
     {
-      title: 'Pending Approval',
+      title: 'Menunggu Verifikasi',
       value: pendingInterns.length,
       icon: Clock,
       color: 'from-orange-500 to-orange-600',
@@ -93,7 +95,7 @@ export function MentorDashboard() {
         <Alert>
           <Clock className="size-4" />
           <AlertDescription>
-            Ada {pendingInterns.length} intern baru menunggu approval.{' '}
+            Ada {pendingInterns.length} peserta baru menunggu verifikasi.{' '}
             <Link to="/mentor/approval" className="font-semibold text-blue-600 hover:underline">
               Lihat sekarang
             </Link>
@@ -129,7 +131,7 @@ export function MentorDashboard() {
         {/* Intern per Tahun */}
         <Card>
           <CardHeader>
-            <CardTitle>Intern per Tahun</CardTitle>
+            <CardTitle>Peserta per Tahun</CardTitle>
           </CardHeader>
           <CardContent>
             {yearChartData.length === 0 ? (

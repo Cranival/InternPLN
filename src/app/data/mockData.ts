@@ -29,7 +29,7 @@ export interface Intern {
   message: string;
   photo: string;
   galleryPhotos: string[];
-  status: 'approved' | 'pending';
+  status: 'pending' | 'active' | 'alumni' | 'rejected';
   createdAt: string;
 }
 
@@ -110,7 +110,7 @@ export const mockInterns: Intern[] = [
       'https://images.unsplash.com/photo-1581092795442-6ad9df14126c?w=600&h=400&fit=crop',
       'https://images.unsplash.com/photo-1581092446943-ec3293a0b0b6?w=600&h=400&fit=crop',
     ],
-    status: 'approved',
+    status: 'alumni',
     createdAt: '2024-01-10',
   },
   {
@@ -135,7 +135,7 @@ export const mockInterns: Intern[] = [
       'https://via.placeholder.com/600x400/7c3aed/ffffff?text=Foto+Magang+2',
       'https://via.placeholder.com/600x400/ea580c/ffffff?text=Foto+Magang+3',
     ],
-    status: 'approved',
+    status: 'alumni',
     createdAt: '2024-01-25',
   },
   {
@@ -160,7 +160,7 @@ export const mockInterns: Intern[] = [
       'https://via.placeholder.com/600x400/06b6d4/ffffff?text=Foto+Kegiatan+2',
       'https://via.placeholder.com/600x400/10b981/ffffff?text=Foto+Kegiatan+3',
     ],
-    status: 'approved',
+    status: 'alumni',
     createdAt: '2023-07-20',
   },
   {
@@ -185,7 +185,7 @@ export const mockInterns: Intern[] = [
       'https://via.placeholder.com/600x400/ca8a04/ffffff?text=PLN+Activity+2',
       'https://via.placeholder.com/600x400/0891b2/ffffff?text=PLN+Activity+3',
     ],
-    status: 'approved',
+    status: 'alumni',
     createdAt: '2024-02-20',
   },
   {
@@ -210,7 +210,7 @@ export const mockInterns: Intern[] = [
       'https://via.placeholder.com/600x400/3b82f6/ffffff?text=Team+Photo',
       'https://via.placeholder.com/600x400/ef4444/ffffff?text=Project+Work',
     ],
-    status: 'approved',
+    status: 'alumni',
     createdAt: '2024-01-05',
   },
   {
@@ -236,7 +236,7 @@ export const mockInterns: Intern[] = [
       'https://via.placeholder.com/600x400/10b981/ffffff?text=Final+Presentation',
       'https://via.placeholder.com/600x400/f59e0b/ffffff?text=Certificate+Ceremony',
     ],
-    status: 'approved',
+    status: 'alumni',
     createdAt: '2024-03-20',
   },
   {

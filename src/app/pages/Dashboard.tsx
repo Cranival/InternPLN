@@ -19,14 +19,16 @@ export function Dashboard() {
     caption?: string;
   } | null>(null);
 
-  const approvedInterns = interns.filter((i) => i.status === 'approved');
+  const verifiedInterns = interns.filter((i) => i.status === 'active' || i.status === 'alumni');
+  const alumniInterns = interns.filter((i) => i.status === 'alumni');
+  const activeInterns = interns.filter((i) => i.status === 'active');
   const currentYear = new Date().getFullYear();
-  const internsThisYear = approvedInterns.filter(
+  const internsThisYear = verifiedInterns.filter(
     (i) => new Date(i.periodStart).getFullYear() === currentYear
   );
 
-  const chartData = getInternsByYear(approvedInterns);
-  const recentInterns = approvedInterns
+  const chartData = getInternsByYear(verifiedInterns);
+  const recentInterns = verifiedInterns
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 3);
 
@@ -34,7 +36,7 @@ export function Dashboard() {
   const allPhotos: { photo: string; internName: string; internId: string }[] = [];
   
   // Add from intern galleryPhotos
-  approvedInterns.forEach((intern) => {
+  verifiedInterns.forEach((intern) => {
     if (intern.galleryPhotos && intern.galleryPhotos.length > 0) {
       intern.galleryPhotos.forEach((photo) => {
         allPhotos.push({
@@ -48,7 +50,7 @@ export function Dashboard() {
 
   // Add from gallery data
   gallery.forEach((g) => {
-    const intern = approvedInterns.find((i) => i.id === g.internId);
+    const intern = verifiedInterns.find((i) => i.id === g.internId);
     allPhotos.push({
       photo: g.photo,
       internName: g.internName || intern?.name || 'Unknown',
@@ -67,8 +69,8 @@ export function Dashboard() {
       color: 'from-blue-500 to-blue-600',
     },
     {
-      title: 'Total Alumni Intern',
-      value: approvedInterns.length,
+      title: 'Total Peserta',
+      value: verifiedInterns.length,
       icon: GraduationCap,
       color: 'from-green-500 to-green-600',
     },
@@ -83,9 +85,9 @@ export function Dashboard() {
           <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 25px 25px, white 2%, transparent 0%), radial-gradient(circle at 75px 75px, white 2%, transparent 0%)', backgroundSize: '100px 100px' }}></div>
         </div>
         <div className="relative">
-          <h1 className="mb-2 text-2xl font-bold tracking-tight">Sistem Data Intern & PKL PLN</h1>
+          <h1 className="mb-2 text-2xl font-bold tracking-tight">Database Peserta Magang PLN</h1>
           <p className="text-blue-200 max-w-2xl text-sm">
-            Database terpusat untuk dokumentasi dan histori mahasiswa magang serta siswa PKL di lingkungan PT PLN (Persero)
+            Dokumentasi peserta dan alumni program magang serta PKL di lingkungan PT PLN (Persero)
           </p>
         </div>
       </div>
@@ -118,7 +120,7 @@ export function Dashboard() {
           <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50/30 dark:from-slate-800 dark:to-slate-800 py-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <div className="size-2 rounded-full bg-blue-700"></div>
-              Statistik Intern per Tahun
+              Statistik Peserta per Tahun
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-4 pb-4">

@@ -17,7 +17,7 @@ export function MentorList() {
 
   const getMentorInterns = (mentorId: string) => {
     return interns.filter(
-      (i) => i.mentorId === mentorId && i.status === 'approved'
+      (i) => i.mentorId === mentorId && (i.status === 'active' || i.status === 'alumni')
     );
   };
 
@@ -75,7 +75,7 @@ export function MentorList() {
 
                 <div className="mb-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
                   <Award className="size-4 text-blue-500" />
-                  <span>{totalInterns} Intern Dibimbing</span>
+                  <span>{totalInterns} Peserta Dibimbing</span>
                 </div>
 
                 <Button
@@ -125,17 +125,17 @@ export function MentorList() {
                     <p className="font-semibold text-foreground">{mentor.division}</p>
                   </div>
                   <div className="rounded-xl border border-gray-100 dark:border-slate-700 bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-800 p-4 shadow-sm">
-                    <p className="text-sm text-muted-foreground">Total Intern</p>
+                    <p className="text-sm text-muted-foreground">Total Peserta</p>
                     <p className="font-semibold text-foreground">{mentorInterns.length} Orang</p>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="mb-3 font-semibold text-foreground">Daftar Intern Bimbingan</h4>
+                  <h4 className="mb-3 font-semibold text-foreground">Daftar Peserta Bimbingan</h4>
                   <div className="max-h-60 space-y-2 overflow-y-auto">
                     {mentorInterns.length === 0 ? (
                       <p className="text-center text-sm text-muted-foreground py-8">
-                        Belum ada intern yang dibimbing
+                        Belum ada peserta yang dibimbing
                       </p>
                     ) : (
                       mentorInterns.map((intern) => (
